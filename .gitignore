@@ -13,5 +13,6 @@ yarn-error.log*
 Thumbs.db
 *.tmp
 
-# Datos temporales
+# Base de datos local en tiempo de ejecución
+data/*.json
 data/*.tmp

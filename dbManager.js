@@ -148,8 +148,17 @@ class DatabaseManager {
   saveData(dataToSave) {
     try {
       const payload = JSON.stringify(dataToSave || this.data, null, 2);
-      fs.writeFileSync(TMP_FILE, payload, 'utf8');
-      fs.renameSync(TMP_FILE, DB_FILE);
+      try {
+        fs.writeFileSync(TMP_FILE, payload, 'utf8');
+        if (fs.existsSync(DB_FILE)) {
+          fs.copyFileSync(TMP_FILE, DB_FILE);
+          try { fs.unlinkSync(TMP_FILE); } catch (_) {}
+        } else {
+          fs.renameSync(TMP_FILE, DB_FILE);
+        }
+      } catch (_) {
+        fs.writeFileSync(DB_FILE, payload, 'utf8');
+      }
     } catch (e) {
       console.error(`❌ [DATABASE] Error al guardar datos en disco:`, e.message);
     }
@@ -392,6 +401,57 @@ class DatabaseManager {
       comisionesAfiliadosMXN: comisionesTotales,
       totalTransacciones: transacciones.length
     };
+  }
+
+  getUsuario(tel) {
+    return this.getUser(tel);
+  }
+
+  setUsuario(tel, usuarioObj) {
+    const usuario = {
+      ...usuarioObj,
+      telefonoPropio: (tel || '').trim(),
+      actualizadoEn: new Date().toISOString()
+    };
+    return this.saveUser(usuario);
+  }
+
+  getAllUsuarios() {
+    return this.getAllUsers();
+  }
+
+  agregarEventoRevenueCat(ev) {
+    return this.addRevenueCatEvent(ev);
+  }
+
+  acreditarVentaAfiliado(ref, monto = 120) {
+    if (!ref) return null;
+    const cleanRef = ref.trim().toLowerCase();
+    if (!this.data.afiliados[cleanRef]) {
+      this.data.afiliados[cleanRef] = {
+        id: cleanRef,
+        codigo: cleanRef,
+        nombre: `Creador ${cleanRef}`,
+        canal: 'Twitch / Kick / Redes',
+        visitas: 1,
+        conversiones: 1,
+        ventas: 1,
+        comisionPorcentaje: 30,
+        comisionPorVenta: Math.round(monto * 0.30),
+        saldoComisiones: Math.round(monto * 0.30),
+        gananciasMXN: Math.round(monto * 0.30),
+        creadoEn: new Date().toISOString()
+      };
+    } else {
+      const a = this.data.afiliados[cleanRef];
+      a.conversiones = (a.conversiones || 0) + 1;
+      a.ventas = (a.ventas || 0) + 1;
+      const comision = Math.round(monto * 0.30);
+      a.saldoComisiones = (a.saldoComisiones || 0) + comision;
+      a.gananciasMXN = (a.gananciasMXN || 0) + comision;
+    }
+    this.save();
+    return { afiliado: this.data.afiliados[cleanRef], comisionGenerada: Math.round(monto * 0.30) };
   }
 }
 

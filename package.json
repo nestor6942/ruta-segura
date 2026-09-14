@@ -1,0 +1,29 @@
+{
+  "name": "ruta-segura-platform",
+  "version": "1.0.0",
+  "description": "Plataforma Integral de Movilidad Segura, Rastreo GPS Inteligente, Alertas Twilio/WhatsApp y Pasarela RevenueCat",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "ruta-segura",
+    "gps-tracking",
+    "emergency-alerts",
+    "twilio",
+    "revenuecat",
+    "nodejs",
+    "leaflet",
+    "monetization"
+  ],
+  "author": "Antigravity Dev",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "stripe": "^22.6.2",
+    "twilio": "^6.1.0"
+  }
+}

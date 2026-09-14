@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruta Segura — Plataforma de Movilidad Segura & Suite Rentable</title>
+  <meta name="description" content="Plataforma comercial de monitoreo GPS silencioso, alertas automáticas de WhatsApp vía Twilio, motor matemático Haversine y pasarela de suscripciones RevenueCat ($120 MXN/año).">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       NAVIGATION BAR
+       ========================================== -->
+  <header class="navbar">
+    <a href="#" class="brand" id="brand-logo" onclick="window.switchTab('tab-landing'); return false;">
+      <div class="brand-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="brand-info">
+        <h1>Ruta Segura</h1>
+        <p>Monitoreo GPS Inteligente &middot; Twilio &middot; Stripe &middot; $120 MXN</p>
+      </div>
+    </a>
+
+    <nav class="nav-links" id="main-nav">
+      <button class="nav-btn active" data-tab="tab-landing" id="nav-tab-landing">
+        <i class="fa-solid fa-star"></i> Inicio & Suscripción ($120)
+      </button>
+      <button class="nav-btn" data-tab="tab-simulator" id="nav-tab-simulator">
+        <i class="fa-solid fa-satellite"></i> Centro de Comando
+      </button>
+      <button class="nav-btn" data-tab="tab-billing" id="nav-tab-billing">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Facturación & Afiliados
+      </button>
+      <button class="nav-btn" data-tab="tab-financial" id="nav-tab-financial">
+        <i class="fa-solid fa-chart-line"></i> Modelo Financiero
+      </button>
+      <button class="nav-btn" data-tab="tab-suite" id="nav-tab-suite">
+        <i class="fa-solid fa-cubes"></i> Suite de Apps
+      </button>
+      <button class="nav-btn" data-tab="tab-api-docs" id="nav-tab-api">
+        <i class="fa-solid fa-code"></i> API & Perfil
+      </button>
+    </nav>
+
+    <div class="status-badge-container">
+      <button class="btn-checkout-cta" id="btn-open-checkout" onclick="window.abrirModalCheckout()">
+        <i class="fa-solid fa-crown"></i> Activar Cobertura ($120 MXN)
+      </button>
+      <div class="badge-live" id="system-status-badge">
+        <span class="pulse-dot"></span>
+        <span id="system-status-indicator">Backend Online • Base de Datos Activa</span>
+      </div>
+      <button class="btn-sound-toggle" id="btn-toggle-sound" title="Sonido Activado / Silenciado">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN CONTAINER
+       ========================================== -->
+  <main class="app-container">
+
+    <!-- ==========================================
+         TAB 0: INICIO COMERCIAL & SUSCRIPCIÓN ($120 MXN)
+         ========================================== -->
+    <section id="tab-landing" class="tab-view active">
+      <!-- Hero Section -->
+      <div class="landing-hero">
+        <div class="landing-hero-badge">
+          <i class="fa-solid fa-shield-halved"></i> PLATAFORMA DE MOVILIDAD Y MONITOREO 24/7
+        </div>
+        <h1 class="landing-hero-title">
+          Tu Familia Sabe Que Llegaste Bien.<br>
+          <span style="background: linear-gradient(135deg, #6366f1, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sin Excusas. Siempre.</span>
+        </h1>
+        <p class="landing-hero-subtitle">
+          Protección satelital silenciosa para tus trayectos en taxi, Uber o transporte público. Si el vehículo se detiene más de <strong>3 minutos</strong> o sufres un percance, enviamos una alerta automática con tu ubicación en vivo por <strong>WhatsApp</strong> a tus seres queridos.
+        </p>
+
+        <!-- Pricing Hero Callout -->
+        <div class="landing-price-callout">
+          <div class="landing-price-amount">
+            <span class="price-currency">$120</span>
+            <span class="price-period">MXN / año</span>
+          </div>
+          <div class="landing-price-sub">Equivale a solo <strong>$10 MXN al mes</strong> o $0.33 al día</div>
+          <div style="font-size: 0.78rem; color: #34d399; margin-top: 4px;">
+            <i class="fa-solid fa-check-circle"></i> Paga con Tarjeta, SPEI bancario o efectivo en OXXO
+          </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="landing-cta-group">
+          <button class="btn-action-primary" onclick="window.abrirModalCheckout()" style="padding: 1rem 2rem; font-size: 1.05rem; font-weight: 800; border-radius: 12px; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);">
+            <i class="fa-solid fa-bolt"></i> Activar Cobertura Anual ($120 MXN)
+          </button>
+          <button class="btn-action-safe" onclick="window.switchTab('tab-simulator')" style="padding: 1rem 1.8rem; font-size: 0.95rem; border-radius: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399;">
+            <i class="fa-solid fa-satellite"></i> Probar Simulador GPS en Vivo
+          </button>
+        </div>
+      </div>
+
+      <!-- Impact Stats Bar -->
+      <div class="metrics-grid" style="margin: 2.5rem 0;">
+        <div class="metric-box indigo">
+          <div class="metric-title">Detección Inteligente</div>
+          <div class="metric-value">3 Minutos</div>
+          <div class="metric-sub">Detonador automático por detención anómala</div>
+        </div>
+        <div class="metric-box emerald">
+          <div class="metric-title">Precio Accesible</div>
+          <div class="metric-value" style="color: #10b981;">$120 MXN</div>
+          <div class="metric-sub">Tarifa anual sin letras chiquitas</div>
+        </div>
+        <div class="metric-box purple">
+          <div class="metric-title">Motor Matemático</div>
+          <div class="metric-value">Haversine</div>
+          <div class="metric-sub">Cálculo de desplazamiento geodésico</div>
+        </div>
+        <div class="metric-box amber">
+          <div class="metric-title">Despacho Inmediato</div>
+          <div class="metric-value">Twilio API</div>
+          <div class="metric-sub">WhatsApp directo al familiar con Google Maps</div>
+        </div>
+      </div>
+
+      <!-- Feature Grid: 3 Pillars -->
+      <div style="margin-bottom: 3rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff;">¿Por qué Ruta Segura salva vidas?</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 600px; margin: 0.5rem auto 0 auto;">
+            Diseñado pensando en la realidad de la movilidad urbana en México y Latinoamérica.
+          </p>
+        </div>
+
+        <div class="suite-grid">
+          <div class="app-card featured">
+            <div class="app-header">
+              <div class="app-icon" style="background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </div>
+              <div class="app-title">
+                <h3>Monitoreo Anti-Detenciones</h3>
+                <p>Algoritmo Haversine continuo</p>
+              </div>
+            </div>
+            <p style="font-size: 0.86rem; color: #cbd5e1; line-height: 1.5;">
+              Si el vehículo se queda varado por más de 3 minutos en una zona inesperada, nuestro servidor despacha una alerta con tu mapa en tiempo real sin que tengas que sacar tu teléfono.
+            </p>
+          </div>
+
+          <div class="app-card featured">
+            <div class="app-header">
+              <div class="app-icon" style="background: linear-gradient(135deg, #25d366, #10b981); color: #fff;">
+                <i class="fa-brands fa-whatsapp"></i>
+              </div>
+              <div class="app-title">
+                <h3>WhatsApp Directo al Familiar</h3>
+                <p>Notificación instantánea vía Twilio</p>
+              </div>
+            </div>
+            <p style="font-size: 0.86rem; color: #cbd5e1; line-height: 1.5;">
+              Tu mamá, pareja o amigo recibe un mensaje oficial en su WhatsApp con tu enlace a Google Maps, nivel de batería y hora exacta del evento.
+            </p>
+          </div>
+
+          <div class="app-card featured">
+            <div class="app-header">
+              <div class="app-icon" style="background: linear-gradient(135deg, #4f46e5, #9333ea); color: #fff;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div class="app-title">
+                <h3>Botón de Pánico SOS Satelital</h3>
+                <p>Auxilio prioritario con un toque</p>
+              </div>
+            </div>
+            <p style="font-size: 0.86rem; color: #cbd5e1; line-height: 1.5;">
+              Un botón rojo de máxima prioridad que envía inmediatamente las coordenadas de auxilio satelital a tu red de protección.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing Offer Banner -->
+      <div class="glass-panel" style="text-align: center; padding: 3rem 1.5rem; background: radial-gradient(circle at top, rgba(99, 102, 241, 0.15) 0%, rgba(15, 23, 42, 0.9) 70%); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 20px; margin-bottom: 2rem;">
+        <span class="app-badge-tag" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; font-size: 0.8rem; padding: 0.4rem 0.9rem;">
+          🛡️ MEMBRESÍA ANUAL 100% GARANTIZADA
+        </span>
+        <h2 style="font-size: 2.2rem; font-weight: 900; margin: 1rem 0 0.5rem 0; color: #fff;">
+          $120.00 MXN <span style="font-size: 1rem; color: var(--text-muted); font-weight: 500;">/ año completo</span>
+        </h2>
+        <p style="color: var(--text-muted); max-width: 520px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">
+          Activa tu protección ahora mismo. Generamos automáticamente tu comprobante fiscal oficial (CFDI con desglose de IVA del SAT).
+        </p>
+        <button class="btn-action-primary" onclick="window.abrirModalCheckout()" style="padding: 1rem 2.4rem; font-size: 1.1rem; font-weight: 800; border-radius: 12px; margin: 0 auto; display: inline-flex;">
+          <i class="fa-solid fa-credit-card"></i> Pagar y Activar Suscripción ($120 MXN)
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 1: CENTRO DE COMANDO & SIMULADOR
+         ========================================== -->
+    <section id="tab-simulator" class="tab-view">
+      <div class="simulator-grid">
+
+        <!-- COLUMN 1: SMARTPHONE MOCKUP / APP SIMULATOR -->
+        <div class="phone-mockup-wrapper">
+          <div class="phone-mockup">
+            <!-- Dynamic Notch -->
+            <div class="phone-notch">
+              <div class="phone-speaker"></div>
+              <div class="phone-camera"></div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="phone-status-bar">
+              <span id="phone-clock">10:42 PM</span>
+              <span id="phone-battery-bar">94% 🔋</span>
+            </div>
+
+            <!-- Native Screens Viewport -->
+            <div class="phone-screen-viewport">
+
+              <!-- SCREEN 1: HOME -->
+              <div id="screen-home" class="native-screen active">
+                <div class="mobile-header-bar">
+                  <div class="user-profile-badge">
+                    <div class="avatar-circle">SM</div>
+                    <div>
+                      <div style="font-weight: 800; font-size: 0.95rem;" id="mobile-display-name">Sofía Martínez</div>
+                      <div style="font-size: 0.72rem; color: #10b981;" id="mobile-plan-tag">● Suscripción Activa ($120/año)</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mobile-card">
+                  <div class="mobile-card-title">Contacto de Emergencia Asignado</div>
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                      <div style="font-weight: 700; font-size: 0.9rem;" id="mobile-contact-name">Bertha (Mamá)</div>
+                      <div style="font-size: 0.75rem; color: var(--text-muted);" id="mobile-contact-phone">+52 55 9876 5432</div>
+                    </div>
+                    <span style="background: rgba(37, 211, 102, 0.15); color: #25d366; padding: 0.25rem 0.55rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700;">
+                      <i class="fa-brands fa-whatsapp"></i> Twilio Listo
+                    </span>
+                  </div>
+                </div>
+
+                <div class="trip-active-banner" id="mobile-active-trip-banner" style="display: none;">
+                  <div class="trip-radar">
+                    <i class="fa-solid fa-location-arrow"></i>
+                  </div>
+                  <div style="font-weight: 800; font-size: 0.95rem; color: #10b981;">Monitoreo GPS Silencioso</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;" id="mobile-trip-status">
+                    Calculando detenciones anómalas (Haversine)
+                  </div>
+                </div>
+
+                <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.6rem;">
+                  <button class="btn-action-primary" id="mobile-btn-start" style="justify-content: center; padding: 0.85rem;">
+                    <i class="fa-solid fa-play"></i> Iniciar Ruta Segura
+                  </button>
+                  <button class="btn-action-danger" id="mobile-btn-sos-shortcut" onclick="window.detonarBotonPanico()" style="justify-content: center; padding: 0.75rem; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--border-danger);">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Auxilio Inmediato (SOS)
+                  </button>
+                </div>
+              </div>
+
+              <!-- SCREEN 2: ACTIVE TRIP & TELEMETRY -->
+              <div id="screen-active-trip" class="native-screen">
+                <div class="mobile-header-bar">
+                  <span style="font-weight: 800; font-size: 0.9rem; color: #10b981;">
+                    <i class="fa-solid fa-satellite-dish"></i> Viaje en Curso
+                  </span>
+                  <span class="badge-live" style="font-size: 0.68rem; padding: 0.2rem 0.5rem;">Vigilancia 24/7</span>
+                </div>
+
+                <div class="mobile-card" style="text-align: center;">
+                  <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Distancia Recorrida</div>
+                  <div style="font-size: 1.8rem; font-weight: 900; color: #6366f1; margin: 0.2rem 0;" id="mobile-dist-text">0.00 km</div>
+                  <div style="font-size: 0.75rem; color: var(--text-dim);">Velocidad: <span id="mobile-speed-text" style="color: #fff; font-weight: 700;">0 km/h</span></div>
+                </div>
+
+                <div class="mobile-card">
+                  <div class="mobile-card-title">Motor de Seguridad Haversine</div>
+                  <div style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.4;">
+                    Si te detienes por más de <strong>3 minutos</strong> (< 20 m), se enviará automáticamente un WhatsApp a tu contacto con tu coordenada exacta.
+                  </div>
+                </div>
+
+                <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.6rem;">
+                  <button class="btn-action-safe" id="mobile-btn-arrival" style="justify-content: center; padding: 0.8rem;">
+                    <i class="fa-solid fa-circle-check"></i> ¡Llegué a Salvo!
+                  </button>
+                  <button class="btn-action-danger" onclick="window.detonarBotonPanico()" style="justify-content: center; padding: 0.8rem;">
+                    <i class="fa-solid fa-bell"></i> Botón de Pánico
+                  </button>
+                </div>
+              </div>
+
+              <!-- SCREEN 3: SOS PANIC -->
+              <div id="screen-panic" class="native-screen">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                  <h3 style="color: #ef4444; font-size: 1.1rem; font-weight: 900;">EMERGENCIA</h3>
+                  <p style="font-size: 0.75rem; color: var(--text-muted);">Al presionar, se despacha alerta instantánea a tu contacto con tu mapa en tiempo real.</p>
+                </div>
+
+                <div class="sos-button-wrapper">
+                  <button class="btn-sos-main" id="btn-sos-main">
+                    SOS
+                    <span>AUXILIO</span>
+                  </button>
+                </div>
+
+                <div class="mobile-card" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.06);">
+                  <div style="font-size: 0.75rem; color: #fca5a5; line-height: 1.4;">
+                    <strong>Destinatario Inmediato:</strong><br>
+                    Bertha (Mamá) &bull; +52 55 9876 5432
+                  </div>
+                </div>
+              </div>
+
+              <!-- SCREEN 4: SUBSCRIPTION / REVENUECAT PAYWALL -->
+              <div id="screen-paywall" class="native-screen">
+                <div style="text-align: center; margin-top: 0.5rem; margin-bottom: 1rem;">
+                  <div style="font-size: 2.2rem; margin-bottom: 0.3rem;">🛡️</div>
+                  <h3 style="font-weight: 800; font-size: 1.1rem;">Ruta Segura Premium</h3>
+                  <p style="font-size: 0.75rem; color: var(--text-muted);">Protección integral silenciosa y alertas prioritarias vía WhatsApp</p>
+                </div>
+
+                <div class="mobile-card" style="border: 2px solid #6366f1; background: rgba(99, 102, 241, 0.1);">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-weight: 800; font-size: 0.95rem;">Plan Anual</span>
+                    <div>
+                      <span style="font-size: 1.4rem; font-weight: 900; color: #6366f1;">$120</span>
+                      <span style="font-size: 0.75rem; color: var(--text-muted);">MXN/año</span>
+                    </div>
+                  </div>
+                  <div style="font-size: 0.75rem; color: #a5b4fc; margin-top: 0.3rem;">Equivale a solo $10 MXN al mes</div>
+                </div>
+
+                <ul style="list-style: none; font-size: 0.78rem; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                  <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Rastreo en segundo plano sin drenar batería</li>
+                  <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Notificaciones de WhatsApp automáticas vía Twilio</li>
+                  <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Detección de detenciones anómalas (3 min)</li>
+                  <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Botón de pánico con coordenadas satelitales</li>
+                </ul>
+
+                <button class="btn-action-primary" onclick="window.abrirModalCheckout()" style="width: 100%; justify-content: center; padding: 0.8rem; margin-top: auto;">
+                  <i class="fa-solid fa-bolt"></i> Suscribirme por $120 MXN
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Bottom Navigation Bar inside Phone -->
+            <div class="phone-bottom-nav">
+              <button class="phone-nav-item active" data-mobile-screen="screen-home" id="btn-m-nav-home">
+                <i class="fa-solid fa-house"></i>
+                <span>Inicio</span>
+              </button>
+              <button class="phone-nav-item" data-mobile-screen="screen-active-trip" id="btn-m-nav-trip">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Viaje</span>
+              </button>
+              <button class="phone-nav-item" data-mobile-screen="screen-panic" id="btn-m-nav-panic">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>SOS</span>
+              </button>
+              <button class="phone-nav-item" data-mobile-screen="screen-paywall" id="btn-m-nav-paywall">
+                <i class="fa-solid fa-crown"></i>
+                <span>Premium</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: CENTRAL INTERACTIVE MAP & COMMAND CONTROLS -->
+        <div class="map-container-card glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-map-location-dot" style="color: #6366f1;"></i> Telemetría GPS en Vivo (CDMX)</h3>
+            <div style="display: flex; gap: 0.6rem; align-items: center;">
+              <span class="mono" style="font-size: 0.78rem; color: #a5b4fc;">
+                Distancia: <strong id="live-distance-val">0.00 km</strong> | Vel: <strong id="live-speed-val">0 km/h</strong> | Bat: <strong id="live-battery-val">94%</strong>
+              </span>
+            </div>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="map-control-overlay">
+            <div class="route-selector-group">
+              <label for="select-route-preset" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
+                Trayecto:
+              </label>
+              <select id="select-route-preset" class="select-custom">
+                <option value="reforma_polanco">Paseo de la Reforma ➔ Polanco (Oficinas)</option>
+                <option value="condesa_coyoacan">Parque México (Condesa) ➔ Coyoacán</option>
+                <option value="insurgentes_santafe">Insurgentes ➔ Centro Santa Fe</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn-action-primary" id="btn-real-gps" onclick="window.activarGPSNativoReal()" style="background: linear-gradient(135deg, #0284c7, #06b6d4);" title="Usar el GPS físico de tu celular o navegador">
+                <i class="fa-solid fa-location-crosshairs"></i> Mi GPS Real
+              </button>
+              <button class="btn-action-primary" id="btn-start-trip">
+                <i class="fa-solid fa-play"></i> Iniciar Recorrido
+              </button>
+              <button class="btn-action-safe" id="btn-stop-trip" style="display: none;">
+                <i class="fa-solid fa-check"></i> Llegué a Salvo
+              </button>
+              <button class="btn-action-primary" id="btn-sim-stop" style="display: none; background: #d97706;">
+                ⏱️ Simular Detención (+3 min)
+              </button>
+              <button class="btn-action-danger" id="btn-sos-web">
+                <i class="fa-solid fa-triangle-exclamation"></i> SOS Pánico
+              </button>
+            </div>
+          </div>
+
+          <!-- Leaflet Map Container -->
+          <div id="leaflet-map"></div>
+        </div>
+
+        <!-- COLUMN 3: TWILIO WHATSAPP SIMULATOR & REVENUECAT FEED -->
+        <div class="telemetry-column">
+
+          <!-- WhatsApp Chat Mockup -->
+          <div class="whatsapp-box">
+            <div class="whatsapp-header">
+              <div class="whatsapp-avatar">
+                <i class="fa-brands fa-whatsapp"></i>
+              </div>
+              <div class="whatsapp-contact-info">
+                <h4 id="whatsapp-target-name">Bertha (Mamá)</h4>
+                <span id="whatsapp-target-phone">+52 55 9876 5432 &bull; En línea</span>
+              </div>
+            </div>
+
+            <div class="whatsapp-chat-body" id="whatsapp-chat-body">
+              <div class="chat-bubble bubble-received">
+                <div style="font-weight: 800; font-size: 0.82rem; margin-bottom: 0.2rem; color: #34d399;">
+                  🛡️ RUTA SEGURA BOT
+                </div>
+                <div>Hola Bertha, el sistema de protección de <strong>Sofía</strong> está activo para este viaje. Recibirás alertas inmediatas si se detecta cualquier anomalía.</div>
+                <div class="bubble-time">10:30 PM • Conectado vía Twilio</div>
+              </div>
+            </div>
+
+            <div style="padding: 0.6rem; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(0,0,0,0.2);">
+              <a class="btn-whatsapp-direct" id="btn-open-wa-direct" href="#" target="_blank" style="display: none; width: 100%;">
+                <i class="fa-brands fa-whatsapp"></i> Abrir Alerta en WhatsApp Directo
+              </a>
+            </div>
+          </div>
+
+          <!-- Live Event Log -->
+          <div class="glass-panel events-feed-card">
+            <div class="glass-panel-header" style="margin-bottom: 0.6rem; padding-bottom: 0.4rem;">
+              <h3 style="font-size: 0.9rem;"><i class="fa-solid fa-list-check" style="color: #06b6d4;"></i> Log de Eventos & Pasarelas</h3>
+            </div>
+            <div id="events-log-container">
+              <div class="event-log-item">
+                <span class="event-badge badge-purchase">SISTEMA</span>
+                <div style="flex:1;">
+                  <div>Motor Haversine calibrado y listo para monitorear desplazamientos.</div>
+                  <div style="font-size:0.7rem; color:var(--text-dim); margin-top:2px;">Inicio</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 2: MODELO FINANCIERO & REVENUECAT GATEWAY
+         ========================================== -->
+    <section id="tab-financial" class="tab-view">
+      <div class="financial-layout">
+
+        <!-- Controls & Sliders Column -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-sliders" style="color: #6366f1;"></i> Parámetros del Modelo Financiero</h3>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Audiencia Objetivo Alcanzada</span>
+              <span class="slider-value" id="val-reach">50,000 personas</span>
+            </div>
+            <input type="range" id="calc-reach" class="custom-range" min="5000" max="250000" step="5000" value="50000">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Tasa de Conversión a Suscripción</span>
+              <span class="slider-value" id="val-conversion">3.5%</span>
+            </div>
+            <input type="range" id="calc-conversion" class="custom-range" min="0.5" max="15.0" step="0.5" value="3.5">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Precio de Suscripción Anual</span>
+              <span class="slider-value" id="val-price">$120 MXN</span>
+            </div>
+            <input type="range" id="calc-price" class="custom-range" min="60" max="360" step="10" value="120">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Costo Infraestructura + Twilio (por usuario/año)</span>
+              <span class="slider-value" id="val-cost">$8 MXN</span>
+            </div>
+            <input type="range" id="calc-cost" class="custom-range" min="2" max="25" step="1" value="8">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Tasa de Cancelación Anual (Churn)</span>
+              <span class="slider-value" id="val-churn">12%</span>
+            </div>
+            <input type="range" id="calc-churn" class="custom-range" min="2" max="40" step="1" value="12">
+          </div>
+
+          <hr style="border-color: var(--border-subtle); margin: 1.5rem 0;">
+
+          <!-- RevenueCat Webhook Tester Sandbox -->
+          <div class="glass-panel-header" style="margin-bottom: 0.8rem;">
+            <h3><i class="fa-solid fa-plug" style="color: #a855f7;"></i> Sandbox de Webhooks RevenueCat</h3>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Simula las respuestas del ciclo de vida de compras dentro de la App Store / Google Play procesadas por RevenueCat:
+          </p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+            <button class="btn-action-safe" onclick="window.simularWebhookRevenueCat('INITIAL_PURCHASE')">
+              <i class="fa-solid fa-cart-shopping"></i> Compra Inicial ($120)
+            </button>
+            <button class="btn-action-primary" onclick="window.simularWebhookRevenueCat('RENEWAL')">
+              <i class="fa-solid fa-arrows-rotate"></i> Renovación Anual
+            </button>
+            <button class="btn-action-danger" onclick="window.simularWebhookRevenueCat('CANCELLATION')">
+              <i class="fa-solid fa-ban"></i> Cancelación
+            </button>
+            <button class="btn-action-danger" onclick="window.simularWebhookRevenueCat('EXPIRATION')" style="background: #64748b;">
+              <i class="fa-solid fa-clock"></i> Expiración
+            </button>
+          </div>
+        </div>
+
+        <!-- Profitability Dashboard Cards -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-sack-dollar" style="color: #10b981;"></i> Proyecciones de Rentabilidad & ARR</h3>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-box indigo">
+              <div class="metric-title">Usuarios Suscriptores</div>
+              <div class="metric-value" id="res-paying-users">1,540</div>
+              <div class="metric-sub">Usuarios activos pagando</div>
+            </div>
+
+            <div class="metric-box amber">
+              <div class="metric-title">Ingresos Brutos (ARR)</div>
+              <div class="metric-value" id="res-gross-revenue">$184,800 MXN</div>
+              <div class="metric-sub">Facturación anual total</div>
+            </div>
+
+            <div class="metric-box emerald">
+              <div class="metric-title">Utilidad Neta Estimada</div>
+              <div class="metric-value" id="res-net-profit" style="color: #10b981;">$144,760 MXN</div>
+              <div class="metric-sub" id="res-net-usd">≈ $8,042 USD / año</div>
+            </div>
+
+            <div class="metric-box purple">
+              <div class="metric-title">Margen Operativo</div>
+              <div class="metric-value" id="res-margin">78.3%</div>
+              <div class="metric-sub">Alta eficiencia de software</div>
+            </div>
+          </div>
+
+          <!-- Breakdown Table -->
+          <div class="mobile-card" style="background: rgba(15, 23, 42, 0.6); padding: 1.2rem;">
+            <div class="mobile-card-title">Desglose de Costos de Operación</div>
+            <div style="display: flex; flex-direction: column; gap: 0.7rem; font-size: 0.88rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Comisión Tiendas (Apple App Store / Google Play 15%):</span>
+                <span style="color: #ef4444; font-weight: 700;" id="res-store-fees">-$27,720 MXN</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Infraestructura Cloud + API Twilio / WhatsApp:</span>
+                <span style="color: #ef4444; font-weight: 700;" id="res-infra-cost">-$12,320 MXN</span>
+              </div>
+              <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.6rem; display: flex; justify-content: space-between; font-weight: 800;">
+                <span>Flujo de Caja Libre Proyectado:</span>
+                <span style="color: #10b981;">Altamente Rentable</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem; padding: 1rem; background: rgba(99, 102, 241, 0.08); border-left: 4px solid #6366f1; border-radius: 6px; font-size: 0.82rem; line-height: 1.5;">
+            <strong>💡 Factor Clave del Modelo $120 MXN:</strong> Al fijar un precio anual sumamente accesible ($10 MXN/mes), la fricción de compra desaparece. Las familias y parejas lo adquieren como un seguro de tranquilidad accesible, logrando un churn muy bajo y escalabilidad exponencial.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 3: SUITE DE APPS RENTABLES (PDF)
+         ========================================== -->
+    <section id="tab-suite" class="tab-view">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 800;">Suite de Proyectos Rentables</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Análisis comparativo de viabilidad, arquitectura técnica y monetización basado en el documento de proyectos.</p>
+      </div>
+
+      <div class="suite-grid">
+
+        <!-- APP 1: RUTA SEGURA -->
+        <div class="app-card featured">
+          <span class="app-badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">
+            <i class="fa-solid fa-circle-check"></i> PROYECTO PRINCIPAL (EN PRODUCCIÓN)
+          </span>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #4f46e5, #06b6d4); color: #fff;">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div class="app-title">
+              <h3>Ruta Segura</h3>
+              <p>Movilidad & Monitoreo GPS Silencioso</p>
+            </div>
+          </div>
+          <p style="font-size: 0.84rem; color: #cbd5e1; line-height: 1.5;">
+            Plataforma de acompañamiento en tiempo real con motor matemático Haversine para detección de paradas anómalas y despacho automático de alertas a contactos vía Twilio WhatsApp.
+          </p>
+          <ul class="feature-list">
+            <li><i class="fa-solid fa-check"></i> Motor Haversine (Detección de paradas > 3 min)</li>
+            <li><i class="fa-solid fa-check"></i> Twilio WhatsApp Sandbox con enlace GPS</li>
+            <li><i class="fa-solid fa-check"></i> Botón de pánico de máxima prioridad</li>
+            <li><i class="fa-solid fa-check"></i> Integración nativa RevenueCat ($120 MXN)</li>
+          </ul>
+          <div class="monetization-pill">
+            <strong>Monetización:</strong> Suscripción B2C ($120 MXN/año) &middot; Margen > 75%
+          </div>
+        </div>
+
+        <!-- APP 2: STREAMENGAGE -->
+        <div class="app-card">
+          <span class="app-badge-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">
+            <i class="fa-solid fa-gamepad"></i> EN ANÁLISIS DE ARQUITECTURA
+          </span>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #9333ea, #ec4899); color: #fff;">
+              <i class="fa-solid fa-tv"></i>
+            </div>
+            <div class="app-title">
+              <h3>StreamEngage</h3>
+              <p>Gamificación & Moderación para Creadores</p>
+            </div>
+          </div>
+          <p style="font-size: 0.84rem; color: #cbd5e1; line-height: 1.5;">
+            Suite de interacción interactiva para streamers de Twitch, Kick y YouTube con ruletas de retos, alertas de bits personalizadas, filtros de chat por IA y widgets OBS en tiempo real.
+          </p>
+          <ul class="feature-list">
+            <li><i class="fa-solid fa-check"></i> Widgets overlay compatibles con OBS Studio</li>
+            <li><i class="fa-solid fa-check"></i> Minijuegos interactivos controlados por el chat</li>
+            <li><i class="fa-solid fa-check"></i> Filtro anti-spam con IA y auto-timeout</li>
+            <li><i class="fa-solid fa-check"></i> Integración directa con Stripe y Bits</li>
+          </ul>
+          <div class="monetization-pill">
+            <strong>Monetización:</strong> Freemium + Plan Pro ($9.99 USD/mes) + 5% comisión en donaciones
+          </div>
+        </div>
+
+        <!-- APP 3: ALACENA INTELIGENTE -->
+        <div class="app-card">
+          <span class="app-badge-tag" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">
+            <i class="fa-solid fa-kitchen-set"></i> EN ANÁLISIS DE ARQUITECTURA
+          </span>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #d97706, #10b981); color: #fff;">
+              <i class="fa-solid fa-carrot"></i>
+            </div>
+            <div class="app-title">
+              <h3>Alacena Inteligente</h3>
+              <p>Control de Desperdicio & Recetas con IA</p>
+            </div>
+          </div>
+          <p style="font-size: 0.84rem; color: #cbd5e1; line-height: 1.5;">
+            Escaneo OCR de tickets de supermercado para registrar alimentos, cálculo de fechas de caducidad y generación automática de recetas personalizadas para evitar desperdicios.
+          </p>
+          <ul class="feature-list">
+            <li><i class="fa-solid fa-check"></i> OCR inteligente para tickets de despensa</li>
+            <li><i class="fa-solid fa-check"></i> Notificaciones push antes del vencimiento</li>
+            <li><i class="fa-solid fa-check"></i> Motor de recetas con IA según ingredientes disponibles</li>
+            <li><i class="fa-solid fa-check"></i> Comparador de precios entre supermercados</li>
+          </ul>
+          <div class="monetization-pill">
+            <strong>Monetización:</strong> Plan Familiar ($49 MXN/mes) + Afiliación con apps de delivery
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 4: CONFIGURACIÓN & API DOCUMENTATION
+         ========================================== -->
+    <section id="tab-api-docs" class="tab-view">
+      <div class="financial-layout">
+
+        <!-- User Profile Config Form -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-user-gear" style="color: #6366f1;"></i> Perfil de Usuario & Contacto</h3>
+          </div>
+
+          <form id="user-settings-form" class="webhook-form">
+            <div class="form-group">
+              <label class="form-label" for="input-user-name">Nombre del Usuario:</label>
+              <input type="text" id="input-user-name" class="form-input" value="Sofía Martínez" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="input-user-phone">Teléfono Propio (con código de país):</label>
+              <input type="text" id="input-user-phone" class="form-input" value="+525512345678" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="input-contact-name">Nombre del Contacto de Emergencia:</label>
+              <input type="text" id="input-contact-name" class="form-input" value="Bertha (Mamá)" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="input-contact-phone">Teléfono del Contacto (WhatsApp Twilio):</label>
+              <input type="text" id="input-contact-phone" class="form-input" value="+525598765432" required>
+            </div>
+
+            <div style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+              <span id="sub-status-badge" style="font-size: 0.8rem; font-weight: 700; border: 1px solid; padding: 0.2rem 0.6rem; border-radius: 4px;">
+                Suscripción Activa ($120 MXN)
+              </span>
+              <button type="submit" class="btn-action-primary">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- REST API Endpoints Specs -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-network-wired" style="color: #06b6d4;"></i> Endpoints de la API Backend</h3>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.9rem; font-size: 0.82rem;">
+            <div class="mobile-card" style="margin-bottom: 0;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                <span style="background: #10b981; color: #fff; padding: 0.15rem 0.45rem; border-radius: 3px; font-weight: 800; font-size: 0.7rem;">POST</span>
+                <code style="color: #a5b4fc;">/ubicacion</code>
+              </div>
+              <p style="color: var(--text-muted);">Recepción de telemetría GPS continua, cálculo Haversine y disparo de alertas si se detiene > 3 min.</p>
+            </div>
+
+            <div class="mobile-card" style="margin-bottom: 0;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                <span style="background: #ef4444; color: #fff; padding: 0.15rem 0.45rem; border-radius: 3px; font-weight: 800; font-size: 0.7rem;">POST</span>
+                <code style="color: #a5b4fc;">/api/panico</code>
+              </div>
+              <p style="color: var(--text-muted);">Activación de botón de auxilio SOS y despacho a Twilio WhatsApp con enlace Google Maps.</p>
+            </div>
+
+            <div class="mobile-card" style="margin-bottom: 0;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                <span style="background: #a855f7; color: #fff; padding: 0.15rem 0.45rem; border-radius: 3px; font-weight: 800; font-size: 0.7rem;">POST</span>
+                <code style="color: #a5b4fc;">/webhook-revenuecat</code>
+              </div>
+              <p style="color: var(--text-muted);">Manejo del ciclo de vida de suscripción: INITIAL_PURCHASE, RENEWAL, CANCELLATION, EXPIRATION.</p>
+            </div>
+
+            <div class="mobile-card" style="margin-bottom: 0;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                <span style="background: #3b82f6; color: #fff; padding: 0.15rem 0.45rem; border-radius: 3px; font-weight: 800; font-size: 0.7rem;">GET</span>
+                <code style="color: #a5b4fc;">/api/status</code>
+              </div>
+              <p style="color: var(--text-muted);">Health check del servidor, uptime, conteo de usuarios y estado de los servicios.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 5: FACTURACIÓN & GESTIÓN DE INGRESOS
+         ========================================== -->
+    <section id="tab-billing" class="tab-view">
+      <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.6rem; font-weight: 800;">Panel de Facturación & Monetización</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Historial de comprobantes fiscales timbrados (CFDI 4.0), desglose de IVA (16%) y programa de afiliados para streamers.</p>
+        </div>
+        <div style="display: flex; gap: 0.6rem;">
+          <button class="btn-action-primary" onclick="window.abrirModalCheckout()">
+            <i class="fa-solid fa-plus"></i> Nueva Suscripción / Cobro
+          </button>
+          <a href="/api/admin/export-csv" class="btn-action-safe" style="text-decoration: none;" download>
+            <i class="fa-solid fa-file-csv"></i> Exportar Suscriptores (.CSV)
+          </a>
+        </div>
+      </div>
+
+      <!-- Live Financial Stat Counters -->
+      <div class="metrics-grid" style="margin-bottom: 1.5rem;">
+        <div class="metric-box emerald">
+          <div class="metric-title">Total Facturado (MXN)</div>
+          <div class="metric-value" id="billing-total-facturado" style="color: #10b981;">$0.00 MXN</div>
+          <div class="metric-sub">Facturación acumulada en firme</div>
+        </div>
+
+        <div class="metric-box indigo">
+          <div class="metric-title">IVA Trasladado (16%)</div>
+          <div class="metric-value" id="billing-total-iva">$0.00 MXN</div>
+          <div class="metric-sub">Impuesto federal registrado para SAT</div>
+        </div>
+
+        <div class="metric-box purple">
+          <div class="metric-title">Suscriptores con Cobertura</div>
+          <div class="metric-value" id="billing-suscriptores-count">0</div>
+          <div class="metric-sub">Planes activos a $120 MXN/año</div>
+        </div>
+
+        <div class="metric-box amber">
+          <div class="metric-title">Comisiones Streamers</div>
+          <div class="metric-value" id="billing-comisiones-streamers">$0.00 MXN</div>
+          <div class="metric-sub">30% asignado a creadores de contenido</div>
+        </div>
+      </div>
+
+      <!-- Facturas Emitidas Table Card -->
+      <div class="glass-panel" style="margin-bottom: 1.5rem;">
+        <div class="glass-panel-header">
+          <h3><i class="fa-solid fa-receipt" style="color: #6366f1;"></i> Comprobantes Fiscales Digitales Emitidos (CFDI / Recibos)</h3>
+          <button class="btn-action-primary" onclick="window.recargarFacturasUI()" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+            <i class="fa-solid fa-arrows-rotate"></i> Actualizar Tabla
+          </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="data-table" id="tabla-facturas">
+            <thead>
+              <tr>
+                <th>Folio</th>
+                <th>Cliente / Suscriptor</th>
+                <th>RFC SAT</th>
+                <th>Subtotal</th>
+                <th>IVA (16%)</th>
+                <th>Total</th>
+                <th>Método</th>
+                <th>Fecha</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-facturas">
+              <!-- Se llena dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Affiliate Streamer Link Generator Card -->
+      <div class="financial-layout">
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-tv" style="color: #ec4899;"></i> Generador de Enlaces para Streamers & Afiliados</h3>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Ofrece a streamers de Twitch, Kick y YouTube un <strong>30% de comisión ($36.00 MXN)</strong> por cada suscripción anual concretada con su código de referido.
+          </p>
+
+          <div class="webhook-form">
+            <div class="form-group">
+              <label class="form-label" for="input-streamer-code">Identificador o Canal del Streamer:</label>
+              <input type="text" id="input-streamer-code" class="form-input" placeholder="ej. elded, rivers, robleis..." value="streamer_safe" oninput="window.actualizarEnlaceStreamerInput()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Enlace Exclusivo de Referido:</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="output-streamer-url" class="form-input mono" readonly value="https://ruta-segura.com/?ref=streamer_safe" style="background: rgba(15, 23, 42, 0.7);">
+                <button type="button" class="btn-action-primary" id="btn-copy-streamer-url" onclick="window.copiarEnlaceAfiliado()">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div style="background: rgba(236, 72, 153, 0.08); border-left: 4px solid #ec4899; padding: 0.8rem; border-radius: 6px; font-size: 0.82rem; line-height: 1.5;">
+              <strong>🎮 Cómo monetizan los streamers:</strong> Mencionan en su directo: <em>"Usa mi link en la bio para proteger tus trayectos nocturnos por $120 al año"</em>. Cuando sus seguidores se suscriben, el streamer acumula automáticamente $36 MXN en su balance de comisiones.
+            </div>
+          </div>
+        </div>
+
+        <!-- Affiliate Streamers Leaderboard -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-ranking-star" style="color: #f59e0b;"></i> Afiliados Activos & Liquidaciones</h3>
+          </div>
+          <div id="afiliados-list-container" style="display: flex; flex-direction: column; gap: 0.8rem;">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       CHECKOUT MODAL (PASARELA MULTI-PAGO $120 MXN)
+       ========================================== -->
+  <div class="checkout-modal-backdrop" id="checkout-modal-backdrop" style="display: none;">
+    <div class="checkout-modal-card">
+      <button class="btn-modal-close" onclick="window.cerrarModalCheckout()">✕</button>
+
+      <div class="checkout-modal-header">
+        <div class="checkout-badge-deal">
+          <i class="fa-solid fa-shield-halved"></i> PLAN ANUAL $120 MXN (~$6 USD / año)
+        </div>
+        <h2>Ruta Segura Premium</h2>
+        <p>Monitoreo satelital continuo, detección de paradas anómalas y alertas automáticas de WhatsApp para tu familia.</p>
+      </div>
+
+      <!-- Order Summary Pill -->
+      <div class="order-summary-box">
+        <div class="order-line">
+          <span>Suscripción Anual (365 días):</span>
+          <span class="mono" id="order-subtotal-val">$103.45 MXN</span>
+        </div>
+        <div class="order-line">
+          <span>I.V.A. Trasladado (16% SAT):</span>
+          <span class="mono" id="order-iva-val">$16.55 MXN</span>
+        </div>
+        <div class="order-line discount" id="order-discount-line" style="display: none; color: #34d399;">
+          <span>Descuento Cupón Aplicado:</span>
+          <span class="mono" id="order-discount-val">-$0.00 MXN</span>
+        </div>
+        <div class="order-line total">
+          <span>Total a Pagar:</span>
+          <span class="order-total-price" id="order-total-val">$120.00 MXN</span>
+        </div>
+      </div>
+
+      <!-- Checkout Form -->
+      <form id="checkout-form" onsubmit="window.procesarPagoCheckout(event)">
+        <!-- Step 1: User Data -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="ck-nombre">Nombre Completo:</label>
+            <input type="text" id="ck-nombre" class="form-input" placeholder="ej. Sofía Martínez" value="Sofía Martínez" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ck-telefono">Teléfono Propio (WhatsApp):</label>
+            <input type="tel" id="ck-telefono" class="form-input" placeholder="+525512345678" value="+525512345678" required>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="ck-correo">Correo Electrónico (Para envío de recibo):</label>
+            <input type="email" id="ck-correo" class="form-input" placeholder="usuario@gmail.com" value="sofia.martinez@gmail.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ck-cupon">Cupón de Descuento (Opcional):</label>
+            <div style="display: flex; gap: 0.4rem;">
+              <input type="text" id="ck-cupon" class="form-input" placeholder="ej. STREAMER30" style="text-transform: uppercase;">
+              <button type="button" class="btn-action-primary" onclick="window.aplicarCuponCheckout()" style="padding: 0 0.8rem; font-size: 0.78rem;">
+                Aplicar
+              </button>
+            </div>
+            <div id="ck-cupon-feedback" style="font-size: 0.72rem; margin-top: 3px;"></div>
+          </div>
+        </div>
+
+        <!-- Payment Method Selector Tabs -->
+        <div style="margin-top: 0.8rem; margin-bottom: 0.6rem;">
+          <label class="form-label" style="margin-bottom: 0.4rem;">Selecciona Método de Pago:</label>
+          <div class="payment-method-selector">
+            <button type="button" class="pay-method-btn active" data-method="tarjeta" onclick="window.seleccionarMetodoPago('tarjeta')">
+              <i class="fa-solid fa-credit-card"></i>
+              <span>Tarjeta / Apple Pay</span>
+            </button>
+            <button type="button" class="pay-method-btn" data-method="spei" onclick="window.seleccionarMetodoPago('spei')">
+              <i class="fa-solid fa-building-columns"></i>
+              <span>Transferencia SPEI</span>
+            </button>
+            <button type="button" class="pay-method-btn" data-method="oxxo" onclick="window.seleccionarMetodoPago('oxxo')">
+              <i class="fa-solid fa-store"></i>
+              <span>Efectivo OXXO Pay</span>
+            </button>
+            <button type="button" class="pay-method-btn" data-method="mercadopago" onclick="window.seleccionarMetodoPago('mercadopago')">
+              <i class="fa-solid fa-wallet"></i>
+              <span>Mercado Pago</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Payment Method Details -->
+        <!-- Method 1: Card / Stripe Elements UI -->
+        <div id="pay-view-tarjeta" class="pay-method-view active">
+          <div class="card-mock-input">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Procesado con Stripe SSL 256-bit</span>
+              <div style="display: flex; gap: 0.4rem; color: #a5b4fc; font-size: 1.2rem;">
+                <i class="fa-brands fa-cc-visa"></i>
+                <i class="fa-brands fa-cc-mastercard"></i>
+                <i class="fa-brands fa-apple-pay"></i>
+                <i class="fa-brands fa-google-pay"></i>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.5rem;">
+              <input type="text" class="form-input mono" placeholder="Número de Tarjeta" id="ck-card-number" value="4242 •••• •••• 4242">
+            </div>
+            <div class="form-row-2">
+              <input type="text" class="form-input mono" placeholder="MM/AA" id="ck-card-exp" value="12/28">
+              <input type="password" class="form-input mono" placeholder="CVC" id="ck-card-cvc" value="123" maxlength="4">
+            </div>
+          </div>
+        </div>
+
+        <!-- Method 2: SPEI -->
+        <div id="pay-view-spei" class="pay-method-view">
+          <div class="spei-info-box">
+            <div style="font-weight: 800; font-size: 0.95rem; color: #10b981; margin-bottom: 0.4rem;">
+              <i class="fa-solid fa-bolt"></i> Transferencia Interbancaria Inmediata (SPEI)
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+              Tu suscripción se activa al instante una vez enviada la transferencia:
+            </p>
+            <div class="copy-field-group">
+              <span class="copy-field-label">Banco Receptor:</span>
+              <span class="copy-field-value">STP (Sistema de Transferencias y Pagos)</span>
+            </div>
+            <div class="copy-field-group">
+              <span class="copy-field-label">CLABE Interbancaria (18 dígitos):</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 3px;">
+                <span class="copy-field-value mono" id="spei-clabe-display" style="font-size: 1rem; color: #a5b4fc; font-weight: 800;">646180123456789012</span>
+                <button type="button" class="btn-copy-small" onclick="window.copiarTexto('spei-clabe-display')">Copiar</button>
+              </div>
+            </div>
+            <div class="copy-field-group">
+              <span class="copy-field-label">Concepto de Pago:</span>
+              <span class="copy-field-value mono" id="spei-concepto-display">RUTA-SEGURA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Method 3: OXXO Pay -->
+        <div id="pay-view-oxxo" class="pay-method-view">
+          <div class="oxxo-info-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-weight: 800; color: #ef4444; font-size: 1rem;">OXXO Pay</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Paga en efectivo en cualquier tienda OXXO</span>
+            </div>
+            <div style="text-align: center; margin: 0.8rem 0;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">REFERENCIA NUMÉRICA (14 DÍGITOS)</div>
+              <div class="mono" id="oxxo-ref-display" style="font-size: 1.3rem; font-weight: 900; letter-spacing: 2px; color: #fbbf24;">9840-5512-3456-78</div>
+              <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Vence en 48 horas</div>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
+              1. Acude al cajero de cualquier tienda OXXO.<br>
+              2. Indica que realizarás un pago de servicio <strong>OXXO Pay</strong> y dicta la referencia.<br>
+              3. Conserva tu ticket de pago.
+            </p>
+          </div>
+        </div>
+
+        <!-- Method 4: Mercado Pago -->
+        <div id="pay-view-mercadopago" class="pay-method-view">
+          <div style="padding: 1rem; background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px;">
+            <div style="font-weight: 700; color: #06b6d4; font-size: 0.9rem; margin-bottom: 0.3rem;">
+              Mercado Pago México
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">
+              Paga con saldo de Mercado Pago, tarjeta de débito/crédito guardada, o con Mercado Crédito en cuotas.
+            </p>
+          </div>
+        </div>
+
+        <!-- Optional Invoicing SAT Checkbox -->
+        <div class="invoice-toggle-box" style="margin: 0.8rem 0;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; cursor: pointer; color: #cbd5e1;">
+            <input type="checkbox" id="ck-toggle-factura" onchange="window.toggleDatosFiscales(this.checked)">
+            <span>¿Requieres Factura Fiscal Digital (CFDI con desglose de IVA 16%)?</span>
+          </label>
+
+          <div id="fiscal-fields-container" style="display: none; margin-top: 0.8rem; padding: 0.8rem; background: rgba(15, 23, 42, 0.5); border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="ck-rfc">R.F.C.:</label>
+                <input type="text" id="ck-rfc" class="form-input mono" placeholder="XAXX010101000" style="text-transform: uppercase;">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ck-razon-social">Razón Social / Nombre Fiscal:</label>
+                <input type="text" id="ck-razon-social" class="form-input" placeholder="Nombre completo o empresa">
+              </div>
+            </div>
+            <div class="form-row-2" style="margin-top: 0.4rem;">
+              <div class="form-group">
+                <label class="form-label" for="ck-regimen">Régimen Fiscal:</label>
+                <select id="ck-regimen" class="select-custom" style="width: 100%;">
+                  <option value="616 - Sin obligaciones fiscales">616 - Sin obligaciones fiscales</option>
+                  <option value="605 - Sueldos y Salarios">605 - Sueldos y Salarios</option>
+                  <option value="626 - RESICO">626 - Régimen Simplificado de Confianza</option>
+                  <option value="612 - Personas Físicas con Actividades Empresariales">612 - Actividades Empresariales</option>
+                  <option value="601 - General de Ley Personas Morales">601 - Personas Morales</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ck-uso-cfdi">Uso de CFDI:</label>
+                <select id="ck-uso-cfdi" class="select-custom" style="width: 100%;">
+                  <option value="S01 - Sin efectos fiscales">S01 - Sin efectos fiscales</option>
+                  <option value="G03 - Gastos en general">G03 - Gastos en general</option>
+                  <option value="CP01 - Pagos">CP01 - Pagos</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-checkout-submit" id="btn-submit-payment">
+          <i class="fa-solid fa-lock"></i> Confirmar y Pagar <span id="btn-pay-amount">$120.00 MXN</span>
+        </button>
+      </form>
+
+      <!-- Success Screen View -->
+      <div id="checkout-success-view" style="display: none; text-align: center; padding: 1.5rem 0.5rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem; animation: pulse 1.5s infinite;">🎉</div>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #10b981; margin-bottom: 0.3rem;">
+          ¡Pago Acreditado Exitosamente!
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Tu suscripción anual a <strong>Ruta Segura</strong> ya está en vigor. Tu familia recibirá alertas automáticas si algo inusual sucede durante tus viajes.
+        </p>
+
+        <div class="mobile-card" style="max-width: 360px; margin: 0 auto 1.5rem auto; text-align: left;">
+          <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Comprobante Fiscal Generado</div>
+          <div style="font-size: 1.2rem; font-weight: 800; color: #6366f1; margin: 4px 0;" id="success-folio-text">FAC-2026-0001</div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">Desglose: Subtotal $103.45 + IVA (16%) $16.55 = $120.00 MXN</div>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;">
+          <a href="#" target="_blank" class="btn-action-primary" id="btn-view-invoice" style="text-decoration: none; padding: 0.8rem 1.4rem;">
+            <i class="fa-solid fa-file-invoice"></i> Ver / Descargar Factura Fiscal
+          </a>
+          <button type="button" class="btn-action-safe" onclick="window.cerrarModalCheckout(); window.switchTab('tab-simulator');" style="padding: 0.8rem 1.4rem;">
+            <i class="fa-solid fa-satellite"></i> Ir al Centro de Comando
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Application JS -->
+  <script src="js/app.js"></script>
+</body>
+</html>

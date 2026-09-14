@@ -1,0 +1,24 @@
+{
+  "name": "Ruta Segura — Movilidad Protegida 24/7",
+  "short_name": "RutaSegura",
+  "description": "Monitoreo GPS silencioso con detección Haversine y alertas automáticas por WhatsApp a tus seres queridos.",
+  "start_url": "/?pwa=1",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f19",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1161/1161388.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1161/1161388.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

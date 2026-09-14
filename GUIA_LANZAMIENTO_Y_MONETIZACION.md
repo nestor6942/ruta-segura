@@ -109,6 +109,41 @@ Expo compilará tu aplicación en la nube y te entregará un **enlace de descarg
 
 ---
 
+
+---
+
+## 6. RUTA RÁPIDA DE MONETIZACIÓN EN 24 HORAS
+
+Si no quieres esperar a que Google Play o Apple App Store aprueben la aplicación, puedes empezar a facturar dinero real **hoy mismo** utilizando la Web App / PWA:
+
+### Paso 1: Configura tus Pasarelas de Pago
+1. **Stripe (Tarjetas nacionales, internacionales, Apple Pay, Google Pay)**:
+   - Regístrate en [https://stripe.com](https://stripe.com).
+   - Ve a **Developers** ➔ **API Keys** y copia tu `Secret key` (`sk_live_...`).
+   - Agrégala a tu archivo `.env`: `STRIPE_SECRET_KEY=sk_live_...`.
+2. **Mercado Pago (México: Tarjetas locales, saldo Mercado Pago, OXXO, SPEI)**:
+   - Ingresa a [https://www.mercadopago.com.mx/developers](https://www.mercadopago.com.mx/developers).
+   - Ve a **Tus integraciones** ➔ **Credenciales de producción** y copia tu `Access Token`.
+   - Agrégala a tu archivo `.env`: `MERCADOPAGO_ACCESS_TOKEN=APP_USR-...`.
+
+### Paso 2: Publica tu Servidor en Render.com (Gratis)
+- Sube tu código a GitHub.
+- Conecta el repositorio a Render (Web Service).
+- Pega las variables de entorno en Render y obtendrás tu URL segura HTTPS (ej: `https://ruta-segura.onrender.com`).
+
+### Paso 3: Guiones de Venta de Alto Impacto para TikTok, Reels y Streamers
+
+#### 📹 Guion para TikTok / Instagram Reels (Video de 30 a 45 segundos):
+> *"¿Sabías que el 80% de los asaltos y desvíos ocurren en trayectos nocturnos o taxis de aplicación?*  
+> *(Muestra la pantalla del celular con Ruta Segura)*  
+> *Esta herramienta monitorea tu viaje en tiempo real. Si el vehículo se desvía de tu ruta o se detiene por más de 3 minutos en una zona sospechosa, dispara de inmediato una alerta de emergencia al WhatsApp de tu mamá, tu pareja o tus amigos con tu ubicación satelital exacta.*  
+> *Cuesta solo $10 pesos al mes ($120 al año). Enlace en mi perfil con 30% de descuento usando el código STREAMER30."*
+
+#### 🎙️ Guion para Streamers (Twitch / YouTube / Kick):
+> *"Oigan chat, para todos los que regresan tarde de la universidad, fiestas o el trabajo: les conseguí un convenio con Ruta Segura. Es un botón de pánico y rastreo inteligente por WhatsApp para cuando tomen taxi o caminen de noche. Con mi enlace `?ref=tu_canal` les dan descuento y además apoyan al canal. Cuidarse cuesta menos que un refresco al mes."*
+
+---
+
 ### ✅ ESTADO ACTUAL DEL PROYECTO (100% LISTO PARA MONETIZAR):
 - [x] Backend en Node.js con motor de seguridad Haversine calibrado.
 - [x] Conexión oficial de Twilio para despacho automático de alertas WhatsApp.
@@ -121,3 +156,4 @@ Expo compilará tu aplicación en la nube y te entregará un **enlace de descarg
 - [x] Centro de Comando, simulador GPS Leaflet y modal de Checkout interactivo.
 - [x] Configuración de despliegue en la Nube (`render.yaml` moderno con `runtime: node`).
 - [x] Suite de 37 pruebas automatizadas pasando al 100% (`test/verify_all.js`).
+

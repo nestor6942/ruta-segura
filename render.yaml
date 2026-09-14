@@ -9,19 +9,7 @@ services:
     envVars:
       - key: PORT
         value: 10000
-      - key: TWILIO_ACCOUNT_SID
-        sync: false
-      - key: TWILIO_AUTH_TOKEN
-        sync: false
+      - key: NODE_ENV
+        value: production
       - key: TWILIO_WHATSAPP_NUMBER
         value: whatsapp:+14155238886
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      - key: MERCADOPAGO_ACCESS_TOKEN
-        sync: false
-      - key: REVENUECAT_SECRET_KEY
-        sync: false
-      - key: REVENUECAT_WEBHOOK_AUTH_HEADER
-        sync: false

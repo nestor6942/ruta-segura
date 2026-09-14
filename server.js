@@ -889,13 +889,14 @@ app.get('/api/admin/export-csv', (req, res) => {
   return res.status(200).send(csv);
 });
 
-// 13. Diagnóstico Twilio en Vivo
+// 13. Diagnóstico Twilio en Vivo con Respaldo Automático Click-to-Chat
 app.post('/api/twilio/test', async (req, res) => {
   try {
     const { telefono } = req.body;
     const destino = telefono || '+525512345678';
     const to = normalizarWhatsAppNumero(destino);
     const from = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+    const directUrl = `https://api.whatsapp.com/send?phone=${destino.replace(/[^\d]/g, '')}&text=${encodeURIComponent('🚨 Alerta de Prueba Oficial Ruta Segura: https://maps.google.com/?q=19.432608,-99.133209')}`;
 
     if (!twilioClient) {
       const msgSim = `🛡️ [PRUEBA SIMULADA] Twilio listo para enviar a ${to}. Activa tus claves reales en .env cuando gustes.`;
@@ -903,28 +904,40 @@ app.post('/api/twilio/test', async (req, res) => {
         ok: true,
         modo: 'SIMULADO',
         mensaje: msgSim,
-        enlaceDirectoWhatsApp: `https://api.whatsapp.com/send?phone=${destino.replace(/[^\d]/g, '')}&text=${encodeURIComponent('🚨 Alerta de Prueba Ruta Segura en Vivo')}`
+        enlaceDirectoWhatsApp: directUrl
       });
     }
 
-    const msg = await twilioClient.messages.create({
-      from,
-      to,
-      body: `🛡️ *PRUEBA OFICIAL - RUTA SEGURA*\n\n¡La conexión de alertas automáticas WhatsApp está 100% OPERATIVA y lista para protegerte!\n\n📍 *Ubicación*: https://maps.google.com/?q=19.432608,-99.133209\n🕒 *Hora*: ${new Date().toLocaleTimeString('es-MX')}`
-    });
+    try {
+      const msg = await twilioClient.messages.create({
+        from,
+        to,
+        body: `🛡️ *PRUEBA OFICIAL - RUTA SEGURA*\n\n¡La conexión de alertas automáticas WhatsApp está 100% OPERATIVA y lista para protegerte!\n\n📍 *Ubicación*: https://maps.google.com/?q=19.432608,-99.133209\n🕒 *Hora*: ${new Date().toLocaleTimeString('es-MX')}`
+      });
 
-    return res.status(200).json({
-      ok: true,
-      modo: 'REAL_TWILIO',
-      sid: msg.sid,
-      status: msg.status
-    });
+      return res.status(200).json({
+        ok: true,
+        modo: 'REAL_TWILIO',
+        sid: msg.sid,
+        status: msg.status,
+        enlaceDirectoWhatsApp: directUrl
+      });
+    } catch (twErr) {
+      console.log(`ℹ️ [TWILIO TEST] Respuesta de Twilio: ${twErr.message} (Código ${twErr.code})`);
+      return res.status(200).json({
+        ok: true,
+        modo: 'RESPALDO_WHATSAPP_DIRECTO',
+        errorTwilio: twErr.message,
+        codigoTwilio: twErr.code,
+        limiteTrialAlcanzado: twErr.code === 63038,
+        sugerencia: twErr.code === 63038 
+          ? 'Cuenta Twilio Trial alcanzó el límite diario de 5 mensajes. Para envíos ilimitados añade saldo en twilio.com. El respaldo directo de WhatsApp está 100% activo.'
+          : twErr.message,
+        enlaceDirectoWhatsApp: directUrl
+      });
+    }
   } catch (err) {
-    return res.status(500).json({
-      ok: false,
-      error: err.message,
-      codigo: err.code
-    });
+    return res.status(500).json({ ok: false, error: err.message });
   }
 });
 

@@ -104,6 +104,11 @@ async function runTests() {
       assert(privRes.status === 200 && privText.includes('Aviso de Privacidad Integral'), 'GET /privacidad entrega aviso de privacidad LFPDPPP');
       assert(privText.includes('Geolocalización'), 'Aviso de privacidad regula datos sensibles de geolocalización');
 
+      const adminRes = await fetch(`${BASE_URL}/admin`);
+      const adminText = await adminRes.text();
+      assert(adminRes.status === 200 && adminText.includes('Consola de Dueño'), 'GET /admin entrega consola privada del dueño');
+      assert(adminText.includes('admin-pin-input'), 'GET /admin incluye pantalla de acceso protegida por PIN');
+
       const cssRes = await fetch(`${BASE_URL}/css/style.css`);
       const cssText = await cssRes.text();
       assert(cssRes.status === 200 && cssText.includes('checkout-modal-card'), 'css/style.css contiene estilos de checkout');

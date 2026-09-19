@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruta Segura — Panel de Control & Consola de Dueño</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* Estilos específicos de la consola de administrador */
+    .admin-login-backdrop {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .admin-login-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(20px);
+    }
+    .pin-input {
+      font-size: 1.8rem;
+      letter-spacing: 0.5rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.8rem 1rem;
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       PANTALLA DE ACCESO PROTEGIDO CON PIN
+       ========================================== -->
+  <div id="admin-login-screen" class="admin-login-backdrop">
+    <div class="admin-login-card">
+      <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #6366f1, #06b6d4); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem auto; font-size: 1.8rem; color: white;">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;">Consola de Dueño</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+        Acceso restringido para el Administrador de Ruta Segura. Ingresa tu PIN de seguridad para consultar ingresos, facturas y afiliados.
+      </p>
+
+      <form id="admin-login-form" onsubmit="window.verificarPinAdmin(event)">
+        <input type="password" id="admin-pin-input" class="form-input pin-input" maxlength="8" placeholder="••••" autocomplete="current-password" autofocus required>
+        
+        <div id="admin-login-error" style="display: none; color: #ef4444; font-size: 0.82rem; margin-bottom: 1rem; font-weight: 600;">
+          <i class="fa-solid fa-triangle-exclamation"></i> PIN incorrecto. Intenta de nuevo.
+        </div>
+
+        <button type="submit" class="btn-action-primary" style="width: 100%; justify-content: center; padding: 0.9rem; font-size: 1rem; font-weight: 800; border-radius: 10px;">
+          <i class="fa-solid fa-key"></i> Desbloquear Panel de Control
+        </button>
+      </form>
+
+      <div style="margin-top: 1.5rem; font-size: 0.78rem; color: var(--text-dim);">
+        <p>PIN predeterminado de demostración: <code class="mono" style="color: #38bdf8;">2026</code></p>
+        <a href="/" style="color: var(--text-muted); text-decoration: none; display: inline-block; margin-top: 0.6rem;">
+          <i class="fa-solid fa-arrow-left"></i> Volver a la página pública
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       BARRA DE NAVEGACIÓN ADMINISTRATIVA
+       ========================================== -->
+  <header class="navbar" style="border-bottom: 1px solid rgba(99, 102, 241, 0.3);">
+    <a href="/admin" class="brand">
+      <div class="brand-icon" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
+        <i class="fa-solid fa-crown"></i>
+      </div>
+      <div class="brand-info">
+        <h1>Ruta Segura — Admin</h1>
+        <p>Consola Maestra de Operaciones & Finanzas</p>
+      </div>
+    </a>
+
+    <nav class="nav-links" id="admin-nav">
+      <button class="nav-btn active" data-admin-tab="tab-adm-metrics" onclick="window.cambiarTabAdmin('tab-adm-metrics')">
+        <i class="fa-solid fa-chart-pie"></i> Métricas & ARR
+      </button>
+      <button class="nav-btn" data-admin-tab="tab-adm-invoices" onclick="window.cambiarTabAdmin('tab-adm-invoices')">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Facturas CFDI (SAT)
+      </button>
+      <button class="nav-btn" data-admin-tab="tab-adm-affiliates" onclick="window.cambiarTabAdmin('tab-adm-affiliates')">
+        <i class="fa-solid fa-tv"></i> Afiliados & Streamers
+      </button>
+      <button class="nav-btn" data-admin-tab="tab-adm-financial" onclick="window.cambiarTabAdmin('tab-adm-financial')">
+        <i class="fa-solid fa-calculator"></i> Simulador de Negocio
+      </button>
+      <button class="nav-btn" data-admin-tab="tab-adm-arco" onclick="window.cambiarTabAdmin('tab-adm-arco')">
+        <i class="fa-solid fa-shield-halved"></i> Solicitudes ARCO
+      </button>
+    </nav>
+
+    <div class="status-badge-container">
+      <a href="/" class="btn-checkout-cta" style="background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); text-decoration: none; color: white;">
+        <i class="fa-solid fa-globe"></i> Ver Web Pública
+      </a>
+      <button class="btn-sound-toggle" onclick="window.cerrarSesionAdmin()" title="Cerrar Sesión de Administrador">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       CONTENIDO PRINCIPAL DEL DASHBOARD ADMIN
+       ========================================== -->
+  <main class="app-container" style="padding-top: 2rem;">
+
+    <!-- ==========================================
+         TAB 1: MÉTRICAS GENERALES & ESTADÍSTICAS
+         ========================================== -->
+    <section id="tab-adm-metrics" class="tab-view active">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff;">Métricas Operativas & Facturación</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Telemetría consolidada de ingresos, suscriptores y estados de servidores.</p>
+        </div>
+        <div style="display: flex; gap: 0.8rem;">
+          <button class="btn-action-safe" onclick="window.cargarMetricasAdmin()">
+            <i class="fa-solid fa-rotate"></i> Actualizar Datos
+          </button>
+          <a href="/api/admin/export-csv" target="_blank" class="btn-action-primary" style="text-decoration: none;">
+            <i class="fa-solid fa-file-csv"></i> Descargar Base de Datos (CSV)
+          </a>
+        </div>
+      </div>
+
+      <!-- Métricas Clave Grid -->
+      <div class="metrics-grid">
+        <div class="metric-box indigo">
+          <div class="metric-title">Suscriptores Activos</div>
+          <div class="metric-value" id="adm-total-suscriptores">0</div>
+          <div class="metric-sub">Cuentas pagando $120 cada 2 meses</div>
+        </div>
+
+        <div class="metric-box emerald">
+          <div class="metric-title">ARR Estimado (Anualizado)</div>
+          <div class="metric-value" id="adm-arr-total" style="color: #10b981;">$0 MXN</div>
+          <div class="metric-sub">Facturación proyectada (6 bimestres)</div>
+        </div>
+
+        <div class="metric-box amber">
+          <div class="metric-title">Facturas Fiscales SAT</div>
+          <div class="metric-value" id="adm-total-facturas">0</div>
+          <div class="metric-sub">Comprobantes CFDI 4.0 timbrados</div>
+        </div>
+
+        <div class="metric-box purple">
+          <div class="metric-title">Afiliados / Streamers</div>
+          <div class="metric-value" id="adm-total-afiliados">1</div>
+          <div class="metric-sub">Canales activos con código de referido</div>
+        </div>
+      </div>
+
+      <!-- Estado de Infraestructura y Servicios -->
+      <div class="financial-layout" style="margin-top: 2rem;">
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-server" style="color: #06b6d4;"></i> Diagnóstico de Servicios Conectados</h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.9rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border-subtle);">
+              <span><i class="fa-brands fa-whatsapp" style="color: #25d366; margin-right: 8px;"></i> Twilio WhatsApp Business API:</span>
+              <span class="app-badge-tag" style="background: rgba(16,185,129,0.15); color: #34d399;" id="adm-status-twilio">Operativo (Respaldo Directo Activo)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border-subtle);">
+              <span><i class="fa-brands fa-stripe" style="color: #6366f1; margin-right: 8px;"></i> Stripe Payments (PCI-DSS):</span>
+              <span class="app-badge-tag" style="background: rgba(99,102,241,0.15); color: #a5b4fc;" id="adm-status-stripe">Sandbox Configurado</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border-subtle);">
+              <span><i class="fa-solid fa-database" style="color: #f59e0b; margin-right: 8px;"></i> Base de Datos Persistente:</span>
+              <span class="app-badge-tag" style="background: rgba(245,158,11,0.15); color: #fbbf24;">JSON Atómico en Disco</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span><i class="fa-solid fa-scale-balanced" style="color: #a855f7; margin-right: 8px;"></i> Cumplimiento LFPDPPP / GDPR:</span>
+              <span class="app-badge-tag" style="background: rgba(168,85,247,0.15); color: #c084fc;">100% Activo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-bell" style="color: #10b981;"></i> Enviar WhatsApp de Prueba Oficial</h3>
+          </div>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Prueba la conexión directa de Twilio enviando un mensaje de auxilio a tu propio teléfono celular:
+          </p>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="tel" id="adm-test-phone" class="form-input" placeholder="+525512345678" value="+523335952229">
+            <button class="btn-action-primary" onclick="window.enviarTwilioPruebaAdmin()">
+              <i class="fa-brands fa-whatsapp"></i> Probar
+            </button>
+          </div>
+          <div id="adm-twilio-result" style="margin-top: 1rem; display: none; font-size: 0.82rem; padding: 0.8rem; border-radius: 8px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 2: FACTURACIÓN FISCAL SAT (CFDI 4.0)
+         ========================================== -->
+    <section id="tab-adm-invoices" class="tab-view">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff;">Catálogo de Facturas Digitales CFDI 4.0</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Comprobantes timbrados automáticamente con desglose del 16% de IVA y código QR oficial.</p>
+        </div>
+        <button class="btn-action-safe" onclick="window.cargarFacturasAdmin()">
+          <i class="fa-solid fa-rotate"></i> Recargar Facturas
+        </button>
+      </div>
+
+      <div class="glass-panel" style="padding: 0; overflow-x: auto;">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Folio Fiscal</th>
+              <th>Cliente</th>
+              <th>RFC</th>
+              <th>Monto Total</th>
+              <th>Método</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="adm-facturas-tbody">
+            <!-- Se llena dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 3: AFILIADOS & STREAMERS
+         ========================================== -->
+    <section id="tab-adm-affiliates" class="tab-view">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff;">Programa de Afiliados para Streamers</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Gestión de comisiones (30% = $36 MXN por cada venta de $120 MXN cada 2 meses) y enlaces personalizados.</p>
+      </div>
+
+      <div class="financial-layout">
+        <!-- Generador de Enlaces -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-link" style="color: #ec4899;"></i> Generar Enlace para Nuevo Streamer</h3>
+          </div>
+          <div class="webhook-form">
+            <div class="form-group">
+              <label class="form-label" for="adm-streamer-canal">Nombre / Canal del Creador:</label>
+              <input type="text" id="adm-streamer-canal" class="form-input" placeholder="ej. rivers, elded, robleis..." value="streamer_vip" oninput="window.actualizarEnlaceStreamerAdmin()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Enlace Exclusivo con Código:</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="adm-streamer-url" class="form-input mono" readonly value="http://localhost:3000/?ref=streamer_vip" style="background: rgba(15, 23, 42, 0.7);">
+                <button type="button" class="btn-action-primary" onclick="window.copiarEnlaceAfiliadoAdmin()">
+                  <i class="fa-solid fa-copy"></i> Copiar
+                </button>
+              </div>
+            </div>
+            <div style="background: rgba(236, 72, 153, 0.08); border-left: 4px solid #ec4899; padding: 0.8rem; border-radius: 6px; font-size: 0.82rem; line-height: 1.5;">
+              <strong>💡 Cómo funciona la comisión:</strong> Cada vez que un seguidor compre la suscripción usando este enlace o el código del streamer, el sistema acredita automáticamente <strong>$36.00 MXN</strong> a su saldo.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Streamers -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-ranking-star" style="color: #f59e0b;"></i> Creadores Registrados & Liquidaciones</h3>
+          </div>
+          <div id="adm-afiliados-list" style="display: flex; flex-direction: column; gap: 0.8rem;">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 4: SIMULADOR FINANCIERO Y SANDBOX
+         ========================================== -->
+    <section id="tab-adm-financial" class="tab-view">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff;">Simulador de Negocio & Sandbox RevenueCat</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Ajusta las variables de mercado para proyectar ganancias con el esquema de $120 MXN cada 2 meses ($720 MXN/año por usuario).</p>
+      </div>
+
+      <div class="financial-layout">
+        <!-- Sliders -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-sliders" style="color: #6366f1;"></i> Parámetros de Mercado</h3>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Audiencia Alcanzada</span>
+              <span class="slider-value" id="val-reach">50,000 personas</span>
+            </div>
+            <input type="range" id="calc-reach" class="custom-range" min="5000" max="500000" step="5000" value="50000" oninput="window.calcularModeloFinanciero()">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Tasa de Conversión a Pago</span>
+              <span class="slider-value" id="val-conversion">3.5%</span>
+            </div>
+            <input type="range" id="calc-conversion" class="custom-range" min="0.5" max="15.0" step="0.5" value="3.5" oninput="window.calcularModeloFinanciero()">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Precio de Suscripción (Cada 2 meses)</span>
+              <span class="slider-value" id="val-price">$120 MXN</span>
+            </div>
+            <input type="range" id="calc-price" class="custom-range" min="60" max="360" step="10" value="120" oninput="window.calcularModeloFinanciero()">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Costo Infraestructura + Twilio (por usuario/bimestre)</span>
+              <span class="slider-value" id="val-cost">$8 MXN</span>
+            </div>
+            <input type="range" id="calc-cost" class="custom-range" min="2" max="25" step="1" value="8" oninput="window.calcularModeloFinanciero()">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Tasa de Cancelación Anual (Churn)</span>
+              <span class="slider-value" id="val-churn">12%</span>
+            </div>
+            <input type="range" id="calc-churn" class="custom-range" min="2" max="40" step="1" value="12" oninput="window.calcularModeloFinanciero()">
+          </div>
+
+          <hr style="border-color: var(--border-subtle); margin: 1.5rem 0;">
+
+          <!-- RevenueCat Webhooks Sandbox -->
+          <div class="glass-panel-header" style="margin-bottom: 0.8rem;">
+            <h3><i class="fa-solid fa-plug" style="color: #a855f7;"></i> Sandbox de Webhooks RevenueCat</h3>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+            <button class="btn-action-safe" onclick="window.simularWebhookRevenueCat('INITIAL_PURCHASE')">
+              <i class="fa-solid fa-cart-shopping"></i> Compra ($120)
+            </button>
+            <button class="btn-action-primary" onclick="window.simularWebhookRevenueCat('RENEWAL')">
+              <i class="fa-solid fa-arrows-rotate"></i> Renovación Bimestral
+            </button>
+            <button class="btn-action-danger" onclick="window.simularWebhookRevenueCat('CANCELLATION')">
+              <i class="fa-solid fa-ban"></i> Cancelación
+            </button>
+            <button class="btn-action-danger" onclick="window.simularWebhookRevenueCat('EXPIRATION')" style="background: #64748b;">
+              <i class="fa-solid fa-clock"></i> Expiración
+            </button>
+          </div>
+        </div>
+
+        <!-- Resultados del Modelo Financiero -->
+        <div class="glass-panel">
+          <div class="glass-panel-header">
+            <h3><i class="fa-solid fa-sack-dollar" style="color: #10b981;"></i> Proyecciones de Rentabilidad & ARR (6 Bimestres)</h3>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-box indigo">
+              <div class="metric-title">Usuarios Suscriptores</div>
+              <div class="metric-value" id="res-paying-users">1,540</div>
+              <div class="metric-sub">Usuarios activos retenidos</div>
+            </div>
+
+            <div class="metric-box amber">
+              <div class="metric-title">Ingresos Brutos (ARR)</div>
+              <div class="metric-value" id="res-gross-revenue">$1,108,800 MXN</div>
+              <div class="metric-sub">Facturación anual total (6 ciclos)</div>
+            </div>
+
+            <div class="metric-box emerald">
+              <div class="metric-title">Utilidad Neta Estimada</div>
+              <div class="metric-value" id="res-net-profit" style="color: #10b981;">$868,560 MXN</div>
+              <div class="metric-sub" id="res-net-usd">≈ $48,253 USD / año</div>
+            </div>
+
+            <div class="metric-box purple">
+              <div class="metric-title">Margen Operativo</div>
+              <div class="metric-value" id="res-margin">78.3%</div>
+              <div class="metric-sub">Alta eficiencia de software</div>
+            </div>
+          </div>
+
+          <div class="mobile-card" style="background: rgba(15, 23, 42, 0.6); padding: 1.2rem; margin-top: 1rem;">
+            <div class="mobile-card-title">Desglose Anualizado de Costos</div>
+            <div style="display: flex; flex-direction: column; gap: 0.7rem; font-size: 0.88rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Comisión Tiendas (Apple/Google 15%):</span>
+                <span style="color: #ef4444; font-weight: 700;" id="res-store-fees">-$166,320 MXN</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Infraestructura Cloud + API Twilio / WhatsApp:</span>
+                <span style="color: #ef4444; font-weight: 700;" id="res-infra-cost">-$73,920 MXN</span>
+              </div>
+              <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.6rem; display: flex; justify-content: space-between; font-weight: 800;">
+                <span>Flujo de Caja Libre:</span>
+                <span style="color: #10b981;">Altamente Rentable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         TAB 5: SOLICITUDES ARCO (LFPDPPP)
+         ========================================== -->
+    <section id="tab-adm-arco" class="tab-view">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #fff;">Bitácora Legal de Derechos ARCO (INAI)</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Registro de solicitudes ciudadanas de Acceso, Rectificación, Cancelación y Oposición recibidas.</p>
+        </div>
+        <button class="btn-action-safe" onclick="window.cargarSolicitudesARCOAdmin()">
+          <i class="fa-solid fa-rotate"></i> Recargar Solicitudes
+        </button>
+      </div>
+
+      <div class="glass-panel" style="padding: 0; overflow-x: auto;">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Folio Legal</th>
+              <th>Tipo de Derecho</th>
+              <th>Teléfono</th>
+              <th>Motivo</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="adm-arco-tbody">
+            <!-- Se llena dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Lógica de Autenticación de Administrador
+    const ADMIN_PIN = '2026';
+
+    function verificarPinAdmin(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('admin-pin-input').value;
+      const errorBox = document.getElementById('admin-login-error');
+      
+      if (input === ADMIN_PIN) {
+        sessionStorage.setItem('admin_auth', 'true');
+        document.getElementById('admin-login-screen').style.display = 'none';
+        window.cargarDatosAdminCompletos();
+      } else {
+        errorBox.style.display = 'block';
+        document.getElementById('admin-pin-input').select();
+      }
+    }
+
+    function cerrarSesionAdmin() {
+      sessionStorage.removeItem('admin_auth');
+      window.location.href = '/';
+    }
+
+    function cambiarTabAdmin(tabId) {
+      document.querySelectorAll('#admin-nav .nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-admin-tab') === tabId);
+      });
+      document.querySelectorAll('main > section.tab-view').forEach(tab => {
+        tab.classList.toggle('active', tab.id === tabId);
+      });
+    }
+
+    // Inicialización automática
+    window.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('admin_auth') === 'true') {
+        document.getElementById('admin-login-screen').style.display = 'none';
+        window.cargarDatosAdminCompletos();
+      } else {
+        document.getElementById('admin-login-screen').style.display = 'flex';
+      }
+    });
+
+    window.cargarDatosAdminCompletos = function() {
+      window.cargarMetricasAdmin();
+      window.cargarFacturasAdmin();
+      window.cargarAfiliadosAdmin();
+      window.calcularModeloFinanciero();
+      window.cargarSolicitudesARCOAdmin();
+    };
+
+    window.cargarMetricasAdmin = function() {
+      fetch('/api/status')
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('adm-total-suscriptores').textContent = data.suscriptoresActivos || '0';
+          document.getElementById('adm-arr-total').textContent = '$' + (data.arrProyectadoMXN || 0).toLocaleString('es-MX') + ' MXN';
+        });
+      fetch('/api/facturacion/todas')
+        .then(r => r.json())
+        .then(data => {
+          if (data.ok && data.facturas) {
+            document.getElementById('adm-total-facturas').textContent = data.facturas.length;
+          }
+        });
+    };
+
+    window.cargarFacturasAdmin = function() {
+      fetch('/api/facturacion/todas')
+        .then(r => r.json())
+        .then(data => {
+          const tbody = document.getElementById('adm-facturas-tbody');
+          if (!tbody) return;
+          if (!data.ok || !data.facturas || data.facturas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">Sin facturas registradas</td></tr>';
+            return;
+          }
+          tbody.innerHTML = data.facturas.map(f => `
+            <tr>
+              <td><span class="mono" style="color: #6366f1; font-weight: 700;">${f.folio}</span></td>
+              <td>${f.nombreCliente || 'Consumidor Final'}</td>
+              <td><span class="mono">${f.rfc || 'XAXX010101000'}</span></td>
+              <td><strong style="color: #10b981;">$${Number(f.total).toFixed(2)} MXN</strong></td>
+              <td><span class="app-badge-tag" style="background: rgba(99,102,241,0.15); color: #a5b4fc;">${f.metodoPago || 'Digital'}</span></td>
+              <td style="font-size: 0.78rem; color: var(--text-muted);">${new Date(f.fecha).toLocaleDateString('es-MX')}</td>
+              <td>
+                <a href="/api/facturacion/recibo/${f.folio}" target="_blank" class="btn-action-primary" style="padding: 0.35rem 0.7rem; font-size: 0.75rem; text-decoration: none;">
+                  <i class="fa-solid fa-file-invoice"></i> Ver CFDI
+                </a>
+              </td>
+            </tr>
+          `).join('');
+        });
+    };
+
+    window.cargarAfiliadosAdmin = function() {
+      fetch('/api/afiliados')
+        .then(r => r.json())
+        .then(data => {
+          const container = document.getElementById('adm-afiliados-list');
+          if (!container || !data.ok) return;
+          const afils = Object.values(data.afiliados || {});
+          document.getElementById('adm-total-afiliados').textContent = afils.length;
+          container.innerHTML = afils.map(a => `
+            <div class="mobile-card" style="display: flex; justify-content: space-between; align-items: center; padding: 0.9rem;">
+              <div>
+                <div style="font-weight: 800; font-size: 0.95rem;">${a.nombre} <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(${a.canal})</span></div>
+                <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 2px;">
+                  👁️ ${a.visitas || 0} visitas · 🎯 ${a.conversiones || 0} suscripciones bimestrales
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 1.1rem; font-weight: 800; color: #ec4899;">$${a.saldoComisiones || 0} MXN</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">Comisión acumulada (30%)</div>
+              </div>
+            </div>
+          `).join('');
+        });
+    };
+
+    window.cargarSolicitudesARCOAdmin = function() {
+      fetch('/api/usuario/arco/todas')
+        .then(r => r.json())
+        .then(data => {
+          const tbody = document.getElementById('adm-arco-tbody');
+          if (!tbody) return;
+          if (!data.ok || !data.solicitudes || data.solicitudes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">No se han recibido solicitudes de cancelación ARCO</td></tr>';
+            return;
+          }
+          tbody.innerHTML = data.solicitudes.map(s => `
+            <tr>
+              <td><span class="mono" style="color: #10b981; font-weight: 700;">${s.folio}</span></td>
+              <td><span class="app-badge-tag" style="background: rgba(239,68,68,0.15); color: #f87171;">${s.tipo}</span></td>
+              <td><span class="mono">${s.telefono}</span></td>
+              <td style="font-size: 0.8rem; color: var(--text-muted);">${s.motivo || 'Cancelación de cuenta y datos'}</td>
+              <td style="font-size: 0.78rem;">${new Date(s.timestamp).toLocaleString('es-MX')}</td>
+              <td><span style="color: #34d399; font-size: 0.8rem; font-weight: 700;">✅ ATENDIDA</span></td>
+            </tr>
+          `).join('');
+        });
+    };
+
+    window.actualizarEnlaceStreamerAdmin = function() {
+      const canal = (document.getElementById('adm-streamer-canal').value || 'canal').trim();
+      const origin = window.location.origin;
+      document.getElementById('adm-streamer-url').value = `${origin}/?ref=${encodeURIComponent(canal)}`;
+    };
+
+    window.copiarEnlaceAfiliadoAdmin = function() {
+      const input = document.getElementById('adm-streamer-url');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      alert('¡Enlace copiado al portapapeles!');
+    };
+
+    window.enviarTwilioPruebaAdmin = function() {
+      const tel = document.getElementById('adm-test-phone').value;
+      const resBox = document.getElementById('adm-twilio-result');
+      resBox.style.display = 'block';
+      resBox.style.background = 'rgba(99,102,241,0.15)';
+      resBox.style.color = '#a5b4fc';
+      resBox.textContent = 'Enviando WhatsApp de prueba...';
+
+      fetch('/api/twilio/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telefono: tel })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.ok) {
+            resBox.style.background = 'rgba(16,185,129,0.15)';
+            resBox.style.color = '#34d399';
+            resBox.innerHTML = `<strong>✅ Envío exitoso:</strong> ${data.mensaje || 'Mensaje procesado'}. <br><a href="${data.enlaceDirectoWhatsApp}" target="_blank" style="color: #38bdf8;">Abrir WhatsApp directo</a>`;
+          } else {
+            resBox.style.background = 'rgba(239,68,68,0.15)';
+            resBox.style.color = '#f87171';
+            resBox.textContent = 'Error: ' + (data.error || 'No se pudo enviar');
+          }
+        });
+    };
+  </script>
+</body>
+</html>

@@ -535,7 +535,9 @@ function simularWebhookRevenueCat(tipoEvento) {
 // 9. FINANCIAL CALCULATOR ENGINE ($120 MXN CADA 2 MESES = $720 MXN/AÑO)
 // ==========================================
 function calcularModeloFinanciero() {
-  const reach = parseInt(document.getElementById('calc-reach').value, 10);
+  const reachEl = document.getElementById('calc-reach');
+  if (!reachEl) return;
+  const reach = parseInt(reachEl.value, 10);
   const convRate = parseFloat(document.getElementById('calc-conversion').value) / 100;
   const price = parseFloat(document.getElementById('calc-price').value);
   const costPerUser = parseFloat(document.getElementById('calc-cost').value);

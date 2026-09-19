@@ -1027,6 +1027,11 @@ app.get('/privacidad', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'privacidad.html'));
 });
 
+// Consola de Dueño / Panel Privado de Administrador
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
 // 19. Ejercicio de Derechos ARCO (Cancelación / Supresión de Datos Personales)
 app.post('/api/usuario/eliminar', (req, res) => {
   try {

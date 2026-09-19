@@ -1,7 +1,7 @@
 # 🛡️ RUTA SEGURA — GUÍA MAESTRA DE LANZAMIENTO Y MONETIZACIÓN
 
 > **Plataforma de Movilidad Segura y Monitoreo Inteligente**  
-> Modelo de Negocio: **Suscripción Anual Recurrente de $120 MXN / año (~$6 USD/año)**
+> Modelo de Negocio: **Suscripción Bimestral Recurrente de $120 MXN cada 2 meses (~$60 MXN/mes, 6 ciclos al año = $720 MXN/año)**
 
 ---
 
@@ -100,12 +100,12 @@ Expo compilará tu aplicación en la nube y te entregará un **enlace de descarg
 ---
 
 ## 5. PROYECCIONES FINANCIERAS
-
-| Usuarios Activos | Ingreso Bruto Anual | Costo de Servidor + Twilio | **Ganancia Neta Anual** |
+ 
+| Usuarios Activos | Ingreso Bruto Anual (6 bimestres) | Costo de Servidor + Twilio | **Ganancia Neta Anual** |
 | :--- | :--- | :--- | :--- |
-| **500 usuarios** | $60,000 MXN | ~$2,000 MXN | **$58,000 MXN** (~96% margen) |
-| **2,500 usuarios** | $300,000 MXN | ~$8,000 MXN | **$292,000 MXN** (~97% margen) |
-| **10,000 usuarios** | $1,200,000 MXN | ~$25,000 MXN | **$1,175,000 MXN** (~98% margen) |
+| **500 usuarios** | $360,000 MXN ($120 x 6 x 500) | ~$6,000 MXN | **$354,000 MXN** (~98% margen) |
+| **2,500 usuarios** | $1,800,000 MXN | ~$25,000 MXN | **$1,775,000 MXN** (~98% margen) |
+| **10,000 usuarios** | $7,200,000 MXN | ~$90,000 MXN | **$7,110,000 MXN** (~98% margen) |
 
 ---
 
@@ -137,7 +137,7 @@ Si no quieres esperar a que Google Play o Apple App Store aprueben la aplicació
 > *"¿Sabías que el 80% de los asaltos y desvíos ocurren en trayectos nocturnos o taxis de aplicación?*  
 > *(Muestra la pantalla del celular con Ruta Segura)*  
 > *Esta herramienta monitorea tu viaje en tiempo real. Si el vehículo se desvía de tu ruta o se detiene por más de 3 minutos en una zona sospechosa, dispara de inmediato una alerta de emergencia al WhatsApp de tu mamá, tu pareja o tus amigos con tu ubicación satelital exacta.*  
-> *Cuesta solo $10 pesos al mes ($120 al año). Enlace en mi perfil con 30% de descuento usando el código STREAMER30."*
+> *Cuesta solo $60 pesos al mes ($120 cada 2 meses). Enlace en mi perfil con 30% de descuento usando el código STREAMER30."*
 
 #### 🎙️ Guion para Streamers (Twitch / YouTube / Kick):
 > *"Oigan chat, para todos los que regresan tarde de la universidad, fiestas o el trabajo: les conseguí un convenio con Ruta Segura. Es un botón de pánico y rastreo inteligente por WhatsApp para cuando tomen taxi o caminen de noche. Con mi enlace `?ref=tu_canal` les dan descuento y además apoyan al canal. Cuidarse cuesta menos que un refresco al mes."*

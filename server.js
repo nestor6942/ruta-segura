@@ -196,7 +196,7 @@ app.post('/registro', (req, res) => {
         telefonoContacto: telefonoContacto.trim()
       },
       suscripcionActiva: suscripcionActiva !== undefined ? Boolean(suscripcionActiva) : (usuarioExistente ? usuarioExistente.suscripcionActiva : true),
-      plan: (suscripcionActiva || (usuarioExistente && usuarioExistente.suscripcionActiva)) ? 'Anualidad ($120 MXN)' : 'Gratuito',
+      plan: (suscripcionActiva || (usuarioExistente && usuarioExistente.suscripcionActiva)) ? 'Bimestral ($120 MXN)' : 'Gratuito',
       metodoPago: usuarioExistente?.metodoPago || 'Directo',
       consentimientoLegal: {
         terminosAceptados: true,
@@ -241,7 +241,7 @@ app.post('/ubicacion', (req, res) => {
 
     // Validación de Suscripción (Lógica de Negocio Rentable)
     if (!usuarioDB.suscripcionActiva) {
-      console.log(`❌ [ACCESO DENEGADO] ${usuarioDB.nombre} no tiene suscripción activa de $120 MXN.`);
+      console.log(`❌ [ACCESO DENEGADO] ${usuarioDB.nombre} no tiene suscripción activa de $120 MXN (cada 2 meses).`);
       return res.status(403).json({
         ok: false,
         bloqueadoPorPaywall: true,
@@ -437,7 +437,7 @@ app.post('/api/cupon/validar', (req, res) => {
   }
 });
 
-// 6. Pasarela Stripe: Creación de Sesión de Checkout ($120 MXN / Tarjeta / Apple Pay / Google Pay)
+// 6. Pasarela Stripe: Creación de Sesión de Checkout ($120 MXN cada 2 meses / Tarjeta / Apple Pay / Google Pay)
 app.post('/api/stripe/create-checkout-session', async (req, res) => {
   try {
     const { telefonoPropio, nombre, contactoEmergencia, cupon, ref } = req.body;
@@ -466,7 +466,7 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
         telefonoPropio: telefonoPropio.trim(),
         contactoEmergencia: contactoEmergencia || { nombreContacto: 'Contacto de Emergencia', telefonoContacto: telefonoPropio },
         suscripcionActiva: false,
-        plan: `Anualidad ($${montoMXN} MXN)`,
+        plan: `Bimestral ($${montoMXN} MXN)`,
         creadoEn: new Date().toISOString()
       };
       dbManager.saveUser(usuario);
@@ -482,7 +482,7 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
             price_data: {
               currency: 'mxn',
               product_data: {
-                name: 'Ruta Segura — Cobertura Anual (365 días)',
+                name: 'Ruta Segura — Cobertura Bimestral (60 días / 2 meses)',
                 description: 'Monitoreo GPS silencioso 24/7, botón de auxilio SOS y alertas ilimitadas de WhatsApp vía Twilio.',
                 images: ['https://images.unsplash.com/photo-1508962914676-134849a727f0?w=600']
               },
@@ -577,7 +577,7 @@ app.post('/api/mercadopago/create-preference', async (req, res) => {
         body: JSON.stringify({
           items: [
             {
-              title: 'Ruta Segura — Cobertura Anual (365 días)',
+              title: 'Ruta Segura — Cobertura Bimestral (60 días / 2 meses)',
               unit_price: montoMXN,
               quantity: 1,
               currency_id: 'MXN'
@@ -635,7 +635,7 @@ app.post('/api/pago-directo', (req, res) => {
         telefonoPropio: idUsuario,
         contactoEmergencia: { nombreContacto: 'Contacto Principal', telefonoContacto: idUsuario },
         suscripcionActiva: true,
-        plan: `Anualidad Premium ($${monto} MXN)`,
+        plan: `Bimestral Premium ($${monto} MXN)`,
         actualizadoEn: new Date().toISOString()
       };
       dbManager.saveUser(usuario);
@@ -645,7 +645,7 @@ app.post('/api/pago-directo', (req, res) => {
     const activacion = dbManager.activarSuscripcion(idUsuario, {
       metodo: metodoPago || 'Tarjeta / SPEI / Web Checkout',
       monto,
-      plan: `Anualidad Premium ($${monto} MXN)`,
+      plan: `Bimestral Premium ($${monto} MXN)`,
       transaccionId: txId,
       ref,
       rfc: rfc || 'XAXX010101000',
@@ -667,13 +667,13 @@ app.post('/api/pago-directo', (req, res) => {
       twilioClient.messages.create({
         from: process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886',
         to: toNumber,
-        body: `🎉 *¡SUSCRIPCIÓN RUTA SEGURA ACTIVADA!* 🛡️\n\nHola *${usuario.nombre}*, tu plan anual de *$${monto} MXN* ha sido confirmado con éxito.\n\n📄 *Comprobante Fiscal Digital:* ${factura ? factura.folio : 'Emitido'}\n🔗 *Descargar Factura:* ${urlCompletaRecibo}\n\n✅ Monitoreo inteligente activo 24/7\n✅ Alertas WhatsApp automáticas con motor Haversine\n✅ Botón de auxilio SOS satelital\n\n¡Viaja siempre con tranquilidad!`
+        body: `🎉 *¡SUSCRIPCIÓN RUTA SEGURA ACTIVADA!* 🛡️\n\nHola *${usuario.nombre}*, tu plan de *$${monto} MXN cada 2 meses* ha sido confirmado con éxito.\n\n📄 *Comprobante Fiscal Digital:* ${factura ? factura.folio : 'Emitido'}\n🔗 *Descargar Factura:* ${urlCompletaRecibo}\n\n✅ Monitoreo inteligente activo 24/7\n✅ Alertas WhatsApp automáticas con motor Haversine\n✅ Botón de auxilio SOS satelital\n\n¡Viaja siempre con tranquilidad!`
       }).catch(err => console.log('Notice Twilio dispatch:', err.message));
     }
 
     return res.status(200).json({
       ok: true,
-      mensaje: `¡Suscripción de $${monto} MXN activada con éxito! Tu cobertura anual está en vigor.`,
+      mensaje: `¡Suscripción de $${monto} MXN (cada 2 meses) activada con éxito! Tu cobertura bimestral está en vigor.`,
       usuario: activacion ? activacion.user : usuario,
       transaccion: activacion ? activacion.tx : null,
       factura,
@@ -819,7 +819,7 @@ app.post('/webhook-revenuecat', (req, res) => {
       appUserId,
       precio: evento.price_in_purchased_currency || 120,
       moneda: evento.currency || 'MXN',
-      productoId: evento.product_id || 'ruta_segura_anual_120',
+      productoId: evento.product_id || 'ruta_segura_bimestral_120',
       timestamp: new Date().toISOString()
     };
     dbManager.addRevenueCatEvent(registroEvento);
@@ -832,7 +832,7 @@ app.post('/webhook-revenuecat', (req, res) => {
         dbManager.activarSuscripcion(usuarioEncontrado.telefonoPropio, {
           metodo: 'App Store / Google Play (RevenueCat)',
           monto: registroEvento.precio,
-          plan: 'Anualidad Premium ($120 MXN)',
+          plan: 'Bimestral Premium ($120 MXN)',
           transaccionId: registroEvento.id
         });
         console.log(`✅ ¡Pago validado por RevenueCat! Suscripción Premium activada para: ${usuarioEncontrado.nombre}`);

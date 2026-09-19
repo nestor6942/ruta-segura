@@ -22,10 +22,10 @@ const DEFAULT_DATA = {
         telefonoContacto: '+523335952229'
       },
       suscripcionActiva: true,
-      plan: 'Anualidad Premium ($120 MXN)',
+      plan: 'Bimestral Premium ($120 MXN)',
       metodoPago: 'Sistema / Directo',
       fechaInicio: new Date().toISOString(),
-      fechaVencimiento: new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString(),
+      fechaVencimiento: new Date(Date.now() + 60 * 24 * 3600 * 1000).toISOString(),
       creadoEn: new Date().toISOString()
     },
     {
@@ -37,10 +37,10 @@ const DEFAULT_DATA = {
         telefonoContacto: '+523335952229'
       },
       suscripcionActiva: true,
-      plan: 'Anualidad ($120 MXN)',
+      plan: 'Bimestral ($120 MXN)',
       metodoPago: 'Stripe Checkout',
       fechaInicio: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString(),
-      fechaVencimiento: new Date(Date.now() + 335 * 24 * 3600 * 1000).toISOString(),
+      fechaVencimiento: new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString(),
       creadoEn: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString()
     },
     {
@@ -74,7 +74,7 @@ const DEFAULT_DATA = {
     'STREAMER30': { codigo: 'STREAMER30', descuentoPorcentaje: 30, precioFinal: 84, descripcion: '30% Descuento Especial para Streamers' },
     'SEGURA20': { codigo: 'SEGURA20', descuentoPorcentaje: 20, precioFinal: 96, descripcion: '20% Descuento de Lanzamiento' },
     'FAMILIA': { codigo: 'FAMILIA', descuentoPorcentaje: 17.5, precioFinal: 99, descripcion: 'Tarifa Familiar Especial' },
-    'RUTA2026': { codigo: 'RUTA2026', descuentoPorcentaje: 25, precioFinal: 90, descripcion: 'Promoción Anual 2026' }
+    'RUTA2026': { codigo: 'RUTA2026', descuentoPorcentaje: 25, precioFinal: 90, descripcion: 'Promoción Bimestral 2026' }
   },
   afiliados: {
     'streamer_demo': {
@@ -98,7 +98,7 @@ const DEFAULT_DATA = {
       regimenFiscal: '616 - Sin obligaciones fiscales',
       usoCFDI: 'S01 - Sin efectos fiscales',
       correo: 'sofia.martinez@gmail.com',
-      concepto: 'Suscripción Anual Plataforma Ruta Segura (12 meses)',
+      concepto: 'Suscripción Bimestral Plataforma Ruta Segura (2 meses)',
       claveSAT: '43232605',
       subtotal: 103.45,
       iva: 16.55,
@@ -199,7 +199,7 @@ class DatabaseManager {
   }
 
   // --- MÉTODOS DE SUSCRIPCIÓN & PAGOS ---
-  activarSuscripcion(telefono, { metodo = 'Stripe / Web', monto = 120, plan = 'Anualidad Premium ($120 MXN)', transaccionId = null, ref = null, rfc = 'XAXX010101000', razonSocial = '', correo = '' } = {}) {
+  activarSuscripcion(telefono, { metodo = 'Stripe / Web', monto = 120, plan = 'Bimestral Premium ($120 MXN)', transaccionId = null, ref = null, rfc = 'XAXX010101000', razonSocial = '', correo = '' } = {}) {
     const user = this.getUser(telefono);
     if (!user) return null;
 
@@ -207,7 +207,7 @@ class DatabaseManager {
     user.plan = plan;
     user.metodoPago = metodo;
     user.fechaInicio = new Date().toISOString();
-    user.fechaVencimiento = new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString();
+    user.fechaVencimiento = new Date(Date.now() + 60 * 24 * 3600 * 1000).toISOString();
     user.actualizadoEn = new Date().toISOString();
 
     const txId = transaccionId || 'tx_' + Date.now();
@@ -260,7 +260,7 @@ class DatabaseManager {
     regimenFiscal = '616 - Sin obligaciones fiscales',
     usoCFDI = 'S01 - Sin efectos fiscales',
     correo = '',
-    concepto = 'Suscripción Anual Plataforma Ruta Segura (12 meses)',
+    concepto = 'Suscripción Bimestral Plataforma Ruta Segura (2 meses)',
     metodoPago = 'Tarjeta / Pasarela Digital',
     transaccionId = 'tx_' + Date.now(),
     montoTotal = 120.00

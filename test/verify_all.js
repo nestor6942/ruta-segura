@@ -339,7 +339,7 @@ async function runTests() {
             id: 'rc_evt_' + Date.now(),
             type: 'INITIAL_PURCHASE',
             app_user_id: testUser.telefonoPropio,
-            product_id: 'ruta_segura_anual_120',
+            product_id: 'ruta_segura_bimestral_120',
             price_in_purchased_currency: 120.00,
             currency: 'MXN'
           }

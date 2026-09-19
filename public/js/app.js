@@ -133,7 +133,7 @@ const AppState = {
       telefono: '+525598765432'
     },
     suscripcionActiva: true,
-    plan: 'Anualidad ($120 MXN)'
+    plan: 'Bimestral ($120 MXN)'
   },
   trip: {
     activo: false,
@@ -365,7 +365,7 @@ function enviarPuntoABackend(punto) {
           });
         }
       } else if (data.bloqueadoPorPaywall) {
-        showToast('🔒 Monitoreo pausado: Se requiere suscripción activa ($120 MXN).', 'warning');
+        showToast('🔒 Monitoreo pausado: Se requiere suscripción activa ($120 MXN cada 2 meses).', 'warning');
       }
     })
     .catch(err => console.error('Error enviando telemetría:', err));
@@ -498,10 +498,10 @@ function simularWebhookRevenueCat(tipoEvento) {
       type: tipoEvento,
       app_user_id: AppState.user.telefono,
       subscriber_id: AppState.user.telefono,
-      product_id: 'ruta_segura_anual_120',
+      product_id: 'ruta_segura_bimestral_120',
       price_in_purchased_currency: 120,
       currency: 'MXN',
-      period_type: 'ANNUAL'
+      period_type: 'BIMONTHLY'
     }
   };
 
@@ -514,9 +514,9 @@ function simularWebhookRevenueCat(tipoEvento) {
     .then(data => {
       if (tipoEvento === 'INITIAL_PURCHASE' || tipoEvento === 'RENEWAL') {
         AppState.user.suscripcionActiva = true;
-        AppState.user.plan = 'Anualidad Premium ($120 MXN)';
+        AppState.user.plan = 'Bimestral Premium ($120 MXN)';
         sfx.playSafeJingle();
-        showToast('💳 ¡Suscripción activada con éxito vía RevenueCat ($120 MXN)!', 'safe');
+        showToast('💳 ¡Suscripción activada con éxito vía RevenueCat ($120 MXN / 2 meses)!', 'safe');
       } else {
         AppState.user.suscripcionActiva = false;
         AppState.user.plan = 'Expirado';
@@ -525,14 +525,14 @@ function simularWebhookRevenueCat(tipoEvento) {
       actualizarEstadoSuscripcionUI();
       registrarEventoLog({
         tipo: `RC_${tipoEvento}`,
-        descripcion: `Webhook de RevenueCat procesado ($120 MXN - ${AppState.user.nombre})`,
+        descripcion: `Webhook de RevenueCat procesado ($120 MXN / 2 meses - ${AppState.user.nombre})`,
         badgeClass: 'badge-purchase'
       });
     });
 }
 
 // ==========================================
-// 9. FINANCIAL CALCULATOR ENGINE ($120 MXN / AÑO)
+// 9. FINANCIAL CALCULATOR ENGINE ($120 MXN CADA 2 MESES = $720 MXN/AÑO)
 // ==========================================
 function calcularModeloFinanciero() {
   const reach = parseInt(document.getElementById('calc-reach').value, 10);
@@ -544,16 +544,17 @@ function calcularModeloFinanciero() {
   // Actualizar etiquetas de valores de los sliders
   document.getElementById('val-reach').textContent = reach.toLocaleString('es-MX') + ' personas';
   document.getElementById('val-conversion').textContent = (convRate * 100).toFixed(1) + '%';
-  document.getElementById('val-price').textContent = '$' + price + ' MXN';
+  document.getElementById('val-price').textContent = '$' + price + ' MXN / 2 meses';
   document.getElementById('val-cost').textContent = '$' + costPerUser + ' MXN';
   document.getElementById('val-churn').textContent = (churn * 100).toFixed(0) + '%';
 
-  // Cálculos
+  // Cálculos (6 ciclos de facturación bimestral al año)
   const usuariosPagos = Math.round(reach * convRate);
   const usuariosRetenidos = Math.round(usuariosPagos * (1 - churn));
-  const ingresoBruto = usuariosRetenidos * price;
+  const ciclosPorAno = 6;
+  const ingresoBruto = usuariosRetenidos * price * ciclosPorAno;
   const comisionTiendas = ingresoBruto * 0.15; // Apple / Google 15% Small Business
-  const costoTwilioInfra = usuariosRetenidos * costPerUser;
+  const costoTwilioInfra = usuariosRetenidos * costPerUser * ciclosPorAno;
   const utilidadNeta = ingresoBruto - comisionTiendas - costoTwilioInfra;
   const margenNeto = ingresoBruto > 0 ? (utilidadNeta / ingresoBruto) * 100 : 0;
   const utilidadUSD = utilidadNeta / 18.0; // Tipo de cambio estimado
@@ -640,11 +641,11 @@ function actualizarEstadoSuscripcionUI() {
   const planText = document.getElementById('user-plan-name');
   if (AppState.user.suscripcionActiva) {
     if (badge) {
-      badge.textContent = 'Suscripción Activa ($120 MXN)';
+      badge.textContent = 'Suscripción Activa ($120 MXN / 2 meses)';
       badge.style.color = '#10b981';
       badge.style.borderColor = 'rgba(16,185,129,0.4)';
     }
-    if (planText) planText.textContent = 'Anualidad Premium ($120 MXN)';
+    if (planText) planText.textContent = 'Bimestral Premium ($120 MXN)';
   } else {
     if (badge) {
       badge.textContent = 'Suscripción Inactiva / Expirada';
@@ -1083,12 +1084,12 @@ function activarSuscripcionLocal({ telefono, nombre, correo, metodo, cupon, rfc,
 
       if (data.ok) {
         AppState.user.suscripcionActiva = true;
-        AppState.user.plan = `Anualidad Premium ($${checkoutState.montoFinal} MXN)`;
+        AppState.user.plan = `Bimestral Premium ($${checkoutState.montoFinal} MXN)`;
         AppState.user.nombre = nombre;
         AppState.user.telefono = telefono;
 
         sfx.playSafeJingle();
-        showToast('💳 ¡Suscripción de $120 MXN activada con éxito!', 'safe');
+        showToast('💳 ¡Suscripción de $120 MXN (cada 2 meses) activada con éxito!', 'safe');
 
         document.getElementById('checkout-form').style.display = 'none';
         const successView = document.getElementById('checkout-success-view');

@@ -187,7 +187,7 @@ export default function App() {
       <View style={styles.header}>
         <Text style={styles.brandTitle}>🛡️ Ruta Segura</Text>
         <Text style={styles.brandSubtitle}>
-          {subscriptionActive ? '● Plan Activo ($120 MXN/año)' : '○ Sin Suscripción'}
+          {subscriptionActive ? '● Plan Activo ($120 MXN / 2 meses)' : '○ Sin Suscripción'}
         </Text>
       </View>
 
@@ -282,7 +282,7 @@ export default function App() {
           <View style={styles.screenContainer}>
             <View style={styles.paywallCard}>
               <Text style={styles.paywallTitle}>Ruta Segura Premium</Text>
-              <Text style={styles.paywallPrice}>$120 MXN / año</Text>
+              <Text style={styles.paywallPrice}>$120 MXN / cada 2 meses</Text>
               <Text style={styles.paywallDesc}>Tranquilidad total para ti y tus seres queridos con monitoreo GPS 24/7 y alertas WhatsApp automáticas.</Text>
             </View>
 
@@ -290,7 +290,7 @@ export default function App() {
               style={styles.btnSubscribe}
               onPress={() => Alert.alert('RevenueCat', 'Procesando compra segura en App Store / Play Store...')}
             >
-              <Text style={styles.btnText}>Adquirir en App Store / Play Store ($120)</Text>
+              <Text style={styles.btnText}>Adquirir en App Store / Play Store ($120 / 2 meses)</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -299,7 +299,7 @@ export default function App() {
                 Linking.openURL(backendUrl).catch(() => Alert.alert('Aviso', 'Abre ' + backendUrl + ' en tu navegador para pagar con Tarjeta, Mercado Pago o SPEI.'));
               }}
             >
-              <Text style={styles.btnText}>💳 Pagar en Línea con Tarjeta / Mercado Pago ($120)</Text>
+              <Text style={styles.btnText}>💳 Pagar en Línea con Tarjeta / Mercado Pago ($120 / 2 meses)</Text>
             </TouchableOpacity>
           </View>
         )}

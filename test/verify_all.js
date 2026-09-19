@@ -431,10 +431,10 @@ async function runTests() {
   console.log('====================================================');
 
   if (failed === 0) {
-    console.log('🎉 ¡TODAS LAS PRUEBAS (FUNCIONALES, FISCALES Y DE PRIVACIDAD LFPDPPP) PASARON AL 100%!');
-    process.exit(0);
+    console.log('🎉 ¡TODAS LAS PRUEBAS (FUNCIONALES, FISCALES Y DE PRIVACIDAD LFPDPPP) PASARON AL 100%!\n');
+    process.exitCode = 0;
   } else {
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 

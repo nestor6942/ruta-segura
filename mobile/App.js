@@ -4,10 +4,13 @@ import { StatusBar } from 'expo-status-bar';
 import * as Location from 'expo-location';
 import Purchases from 'react-native-purchases';
 
-// Configuration (Cambia por tu URL pública de Render o IP local de Wi-Fi)
-const DEFAULT_BACKEND_URL = 'http://localhost:3000';
-const REVENUECAT_API_KEY_APPLE = 'appl_mock_api_key';
-const REVENUECAT_API_KEY_GOOGLE = 'goog_mock_api_key';
+// Configuration
+// ⚠️ PRODUCCIÓN: Cambia esta URL por tu servidor Render ANTES de compilar el APK/AAB.
+// Ejemplo: 'https://ruta-segura-api.onrender.com'
+// DESARROLLO: Usa la IP local de tu Wi-Fi (ej: 'http://192.168.1.X:3000')
+const DEFAULT_BACKEND_URL = 'https://ruta-segura-api.onrender.com';
+const REVENUECAT_API_KEY_APPLE = 'appl_mock_api_key'; // Reemplaza con tu key real de RevenueCat
+const REVENUECAT_API_KEY_GOOGLE = 'goog_mock_api_key'; // Reemplaza con tu key real de RevenueCat
 
 export default function App() {
   const [backendUrl, setBackendUrl] = useState(DEFAULT_BACKEND_URL);
@@ -16,6 +19,7 @@ export default function App() {
   const [subscriptionActive, setSubscriptionActive] = useState(true);
   const [location, setLocation] = useState(null);
   const [distanceTraveled, setDistanceTraveled] = useState(0);
+  const [termsAccepted, setTermsAccepted] = useState(true);
 
   const [userProfile, setUserProfile] = useState({
     nombre: 'Sofía Martínez',
@@ -25,6 +29,41 @@ export default function App() {
       telefono: '+525598765432'
     }
   });
+
+  // Handle ARCO Data Deletion
+  const handleEliminarDatosARCO = () => {
+    Alert.alert(
+      'Eliminar mis Datos Personales',
+      '¿Estás seguro de que deseas ejercer tu derecho de Cancelación ARCO y borrar permanentemente tu perfil y registros del servidor?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sí, Eliminar Todo',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const res = await fetch(`${backendUrl}/api/usuario/eliminar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telefono: userProfile.telefono })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                Alert.alert('Datos Purgados', 'Tus datos personales y de ubicación han sido borrados de los servidores de Ruta Segura.');
+                setUserProfile({ nombre: '', telefono: '', contactoEmergencia: { nombre: '', telefono: '' } });
+                setIsTracking(false);
+                setCurrentTab('home');
+              } else {
+                Alert.alert('Aviso', data.error || 'No se pudo procesar la solicitud.');
+              }
+            } catch (e) {
+              Alert.alert('Error', 'No se pudo conectar con el servidor: ' + e.message);
+            }
+          }
+        }
+      ]
+    );
+  };
 
   // Initialize RevenueCat SDK
   useEffect(() => {
@@ -162,11 +201,28 @@ export default function App() {
               <Text style={styles.contactPhone}>{userProfile.contactoEmergencia.telefono}</Text>
             </View>
 
+            {/* Consentimiento Legal de Geolocalización (LFPDPPP) */}
+            <TouchableOpacity
+              style={[styles.card, { marginVertical: 8, borderColor: termsAccepted ? '#10b981' : '#ef4444', backgroundColor: termsAccepted ? 'rgba(16,185,129,0.06)' : 'rgba(239,68,68,0.06)' }]}
+              onPress={() => setTermsAccepted(!termsAccepted)}
+            >
+              <Text style={{ color: '#ffffff', fontSize: 13, fontWeight: '700' }}>
+                {termsAccepted ? '☑️ Consentimiento Legal Activo' : '⬜ Aceptar Términos y Privacidad'}
+              </Text>
+              <Text style={{ color: '#94a3b8', fontSize: 11, marginTop: 4, lineHeight: 15 }}>
+                Autorizo el tratamiento de mi geolocalización satelital para mi seguridad preventiva conforme a la ley. Toca para {termsAccepted ? 'desactivar' : 'aceptar'}.
+              </Text>
+            </TouchableOpacity>
+
             <View style={styles.actionContainer}>
               {!isTracking ? (
                 <TouchableOpacity
-                  style={styles.btnStart}
+                  style={[styles.btnStart, !termsAccepted && { opacity: 0.6 }]}
                   onPress={() => {
+                    if (!termsAccepted) {
+                      Alert.alert('Consentimiento Requerido', 'Para activar el monitoreo satelital debes aceptar los Términos y el Aviso de Privacidad.');
+                      return;
+                    }
                     setIsTracking(true);
                     setCurrentTab('trip');
                   }}
@@ -247,6 +303,43 @@ export default function App() {
             </TouchableOpacity>
           </View>
         )}
+
+        {currentTab === 'legal' && (
+          <View style={styles.screenContainer}>
+            <View style={styles.card}>
+              <Text style={styles.cardHeader}>Marco Legal y Derechos ARCO</Text>
+              <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '700', marginTop: 4 }}>
+                Protección de Datos Personales
+              </Text>
+              <Text style={{ color: '#cbd5e1', fontSize: 12, marginTop: 6, lineHeight: 18 }}>
+                Cumplimiento pleno con la LFPDPPP mexicana y GDPR. Tu ubicación se procesa exclusivamente mientras un viaje está en curso y nunca es vendida ni transferida a brokers comerciales.
+              </Text>
+            </View>
+
+            <View style={{ gap: 10, marginVertical: 12 }}>
+              <TouchableOpacity
+                style={[styles.btnSafe, { backgroundColor: '#4f46e5' }]}
+                onPress={() => Linking.openURL(`${backendUrl}/terminos`).catch(() => Alert.alert('Aviso', 'Visita ' + backendUrl + '/terminos en tu navegador.'))}
+              >
+                <Text style={styles.btnText}>📄 Leer Términos y Condiciones</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.btnSafe, { backgroundColor: '#059669' }]}
+                onPress={() => Linking.openURL(`${backendUrl}/privacidad`).catch(() => Alert.alert('Aviso', 'Visita ' + backendUrl + '/privacidad en tu navegador.'))}
+              >
+                <Text style={styles.btnText}>🛡️ Leer Aviso de Privacidad Integral</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.btnPanicSmall}
+                onPress={handleEliminarDatosARCO}
+              >
+                <Text style={styles.btnTextPanic}>🗑️ Purgar / Eliminar mis Datos (ARCO)</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
 
       {/* Bottom Navigation */}
@@ -262,6 +355,9 @@ export default function App() {
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => setCurrentTab('paywall')}>
           <Text style={[styles.navText, currentTab === 'paywall' && styles.navActive]}>👑 Plan</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => setCurrentTab('legal')}>
+          <Text style={[styles.navText, currentTab === 'legal' && styles.navActive]}>⚖️ Legal</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

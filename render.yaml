@@ -11,5 +11,15 @@ services:
         value: 10000
       - key: NODE_ENV
         value: production
+      - key: BASE_URL
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
       - key: TWILIO_WHATSAPP_NUMBER
         value: whatsapp:+14155238886
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: MERCADOPAGO_ACCESS_TOKEN
+        sync: false

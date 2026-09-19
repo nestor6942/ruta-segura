@@ -762,6 +762,15 @@
               <input type="text" id="input-contact-phone" class="form-input" value="+525598765432" required>
             </div>
 
+            <div class="legal-consent-group" style="margin: 0.8rem 0; padding: 0.7rem; background: rgba(15, 23, 42, 0.5); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+              <label style="display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.78rem; color: #cbd5e1; cursor: pointer;">
+                <input type="checkbox" id="ck-legal-consent" checked required style="margin-top: 3px;">
+                <span>
+                  He leído y acepto los <a href="terminos.html" target="_blank" style="color: #818cf8; text-decoration: underline; font-weight: 700;">Términos y Condiciones</a> y consiento expresamente el tratamiento de mi geolocalización GPS en tiempo real conforme al <a href="privacidad.html" target="_blank" style="color: #34d399; text-decoration: underline; font-weight: 700;">Aviso de Privacidad (LFPDPPP)</a>.
+                </span>
+              </label>
+            </div>
+
             <div style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
               <span id="sub-status-badge" style="font-size: 0.8rem; font-weight: 700; border: 1px solid; padding: 0.2rem 0.6rem; border-radius: 4px;">
                 Suscripción Activa ($120 MXN)
@@ -1151,6 +1160,11 @@
           </div>
         </div>
 
+        <!-- Legal notice in Checkout -->
+        <div style="margin: 0.8rem 0; font-size: 0.76rem; color: #94a3b8; line-height: 1.4; text-align: center;">
+          <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Al pagar, aceptas nuestros <a href="terminos.html" target="_blank" style="color: #818cf8; text-decoration: underline;">Términos y Condiciones</a> y el <a href="privacidad.html" target="_blank" style="color: #34d399; text-decoration: underline;">Aviso de Privacidad (LFPDPPP)</a>. Pagos cifrados 256-bit SSL con estándar bancario PCI-DSS Nivel 1.
+        </div>
+
         <button type="submit" class="btn-checkout-submit" id="btn-submit-payment">
           <i class="fa-solid fa-lock"></i> Confirmar y Pagar <span id="btn-pay-amount">$120.00 MXN</span>
         </button>
@@ -1184,6 +1198,140 @@
 
     </div>
   </div>
+
+  <!-- ==========================================
+       MODAL: DERECHOS ARCO & CANCELACIÓN DE DATOS (LFPDPPP)
+       ========================================== -->
+  <div id="arco-modal-backdrop" class="modal-backdrop" style="display: none;" onclick="if(event.target===this) window.cerrarModalARCO()">
+    <div class="modal-dialog glass-panel" style="max-width: 540px; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.8rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-user-shield" style="color: #10b981;"></i> Derechos ARCO & Protección de Datos
+        </h3>
+        <button type="button" class="btn-sound-toggle" onclick="window.cerrarModalARCO()" style="font-size: 1.2rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 1.2rem; line-height: 1.6;">
+        De conformidad con la <em>Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP)</em>, tienes derecho a solicitar la consulta, corrección, oposición o <strong>eliminación definitiva e inmediata</strong> de tu cuenta, número telefónico y telemetría de ubicación.
+      </p>
+
+      <form id="form-arco-modal" onsubmit="window.enviarSolicitudARCOModal(event)">
+        <div class="form-group">
+          <label class="form-label" for="arco-modal-tipo">Tipo de Derecho a Ejercer:</label>
+          <select id="arco-modal-tipo" class="select-custom" style="width: 100%;">
+            <option value="CANCELACION">Cancelación (Eliminar mis datos y cuenta por completo)</option>
+            <option value="ACCESO">Acceso (Consultar qué datos tienen registrados sobre mí)</option>
+            <option value="RECTIFICACION">Rectificación (Modificar mi teléfono o contacto de auxilio)</option>
+            <option value="OPOSICION">Oposición (Oponerme al tratamiento de datos secundarios)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 0.8rem;">
+          <label class="form-label" for="arco-modal-phone">Tu Número Telefónico Registrado:</label>
+          <input type="tel" id="arco-modal-phone" class="form-input" placeholder="+525512345678" required>
+        </div>
+
+        <div class="form-group" style="margin-top: 0.8rem;">
+          <label class="form-label" for="arco-modal-motivo">Motivo o Comentarios (Opcional):</label>
+          <input type="text" id="arco-modal-motivo" class="form-input" placeholder="Ej: Ya no requiero el servicio / Eliminar historial">
+        </div>
+
+        <div id="arco-modal-status" style="display: none; margin-top: 1rem; padding: 0.8rem; border-radius: 8px; font-size: 0.85rem;"></div>
+
+        <div style="display: flex; gap: 0.8rem; justify-content: flex-end; margin-top: 1.5rem;">
+          <button type="button" class="btn-action-primary" onclick="window.cerrarModalARCO()" style="background: rgba(255,255,255,0.08);">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-action-danger" id="btn-submit-arco">
+            <i class="fa-solid fa-trash-can"></i> Ejecutar Solicitud ARCO
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       FOOTER OFICIAL & CUMPLIMIENTO LEGAL
+       ========================================== -->
+  <footer class="app-main-footer" style="margin-top: 4rem; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(11, 15, 25, 0.95); padding: 3rem 2rem 2rem 2rem;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; margin-bottom: 2.5rem;">
+      
+      <!-- Columna 1: Marca y Propósito -->
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #06b6d4); display: flex; align-items: center; justify-content: center; color: white;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <span style="font-size: 1.2rem; font-weight: 800; color: white;">Ruta Segura</span>
+        </div>
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.6;">
+          Plataforma tecnológica de movilidad y prevención telemática. Monitoreo inteligente de trayectos, detección de detenciones anómalas con algoritmo Haversine y alertas automáticas por WhatsApp a tus familiares.
+        </p>
+        <div style="margin-top: 1rem; font-size: 0.82rem; color: #10b981; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-lock"></i> Cifrado de extremo a extremo TLS 1.3
+        </div>
+      </div>
+
+      <!-- Columna 2: Navegación Rápida -->
+      <div>
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Navegación</h4>
+        <ul style="list-style: none; font-size: 0.84rem; display: flex; flex-direction: column; gap: 0.6rem; padding: 0;">
+          <li><a href="#" onclick="window.switchTab('tab-landing'); return false;" style="color: #cbd5e1; text-decoration: none;">Inicio & Suscripción ($120)</a></li>
+          <li><a href="#" onclick="window.switchTab('tab-simulator'); return false;" style="color: #cbd5e1; text-decoration: none;">Centro de Comando en Vivo</a></li>
+          <li><a href="#" onclick="window.switchTab('tab-billing'); return false;" style="color: #cbd5e1; text-decoration: none;">Facturación Fiscal & Afiliados</a></li>
+          <li><a href="#" onclick="window.switchTab('tab-financial'); return false;" style="color: #cbd5e1; text-decoration: none;">Modelo de Negocio & Métricas</a></li>
+          <li><a href="#" onclick="window.abrirModalCheckout(); return false;" style="color: #6366f1; text-decoration: none; font-weight: 700;">💳 Activar Cobertura Anual</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Marco Legal & Privacidad -->
+      <div>
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Marco Legal & Privacidad</h4>
+        <ul style="list-style: none; font-size: 0.84rem; display: flex; flex-direction: column; gap: 0.6rem; padding: 0;">
+          <li>
+            <a href="terminos.html" style="color: #818cf8; text-decoration: none; display: flex; align-items: center; gap: 0.4rem;">
+              <i class="fa-solid fa-scale-balanced"></i> Términos y Condiciones de Uso
+            </a>
+          </li>
+          <li>
+            <a href="privacidad.html" style="color: #34d399; text-decoration: none; display: flex; align-items: center; gap: 0.4rem;">
+              <i class="fa-solid fa-user-shield"></i> Aviso de Privacidad Integral (LFPDPPP)
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="window.abrirModalARCO(); return false;" style="color: #f87171; text-decoration: none; display: flex; align-items: center; gap: 0.4rem;">
+              <i class="fa-solid fa-trash-can"></i> Ejercer Derechos ARCO (Borrar mis Datos)
+            </a>
+          </li>
+          <li style="color: var(--text-muted); font-size: 0.78rem; margin-top: 0.3rem;">
+            Cumplimiento normativo con INAI, PROFECO y estándar PCI-DSS.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Infraestructura y Alianzas -->
+      <div>
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Integraciones Oficiales</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.82rem; color: #94a3b8;">
+          <div><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> Twilio WhatsApp Business API</div>
+          <div><i class="fa-brands fa-stripe" style="color: #6366f1;"></i> Stripe Payments México (PCI-DSS)</div>
+          <div><i class="fa-solid fa-building-columns" style="color: #06b6d4;"></i> Sistema de Pagos SPEI (STP) & OXXO</div>
+          <div><i class="fa-solid fa-map" style="color: #10b981;"></i> Cartografía Libre Leaflet & OpenStreetMap</div>
+          <div><i class="fa-solid fa-file-invoice" style="color: #fbbf24;"></i> Emisión CFDI 4.0 con Desglose 16% IVA</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.78rem; color: var(--text-dim); max-width: 1200px; margin: 0 auto;">
+      <div>
+        &copy; 2026 Ruta Segura Technologies. Todos los derechos reservados. Hecho para la seguridad de familias y usuarios en transporte.
+      </div>
+      <div>
+        <span>Aviso: Herramienta preventiva. Ante emergencias mayores llama siempre al <strong>911</strong>.</span>
+      </div>
+    </div>
+  </footer>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

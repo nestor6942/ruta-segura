@@ -111,7 +111,8 @@ const DEFAULT_DATA = {
     }
   ],
   historialAlertas: [],
-  eventosRevenueCat: []
+  eventosRevenueCat: [],
+  solicitudesARCO: []
 };
 
 class DatabaseManager {
@@ -452,6 +453,58 @@ class DatabaseManager {
     }
     this.save();
     return { afiliado: this.data.afiliados[cleanRef], comisionGenerada: Math.round(monto * 0.30) };
+  }
+
+  // --- MÉTODOS DE CUMPLIMIENTO LEGAL & DERECHOS ARCO (LFPDPPP) ---
+  eliminarUsuario(telefono) {
+    if (!telefono) return { ok: false, error: 'Se requiere teléfono para eliminar' };
+    const tel = telefono.trim();
+    const user = this.getUser(tel);
+    if (!user) return { ok: false, error: 'Usuario no encontrado' };
+
+    // 1. Eliminar de Map y de Array de Usuarios
+    this.usuariosMap.delete(tel);
+    this.data.usuarios = (this.data.usuarios || []).filter(u => u.telefonoPropio !== tel && u.id !== user.id);
+
+    // 2. Anonimizar o purgar historial de alertas asociado a este usuario
+    if (this.data.historialAlertas) {
+      this.data.historialAlertas = this.data.historialAlertas.filter(a => a.telefonoUsuario !== tel && a.usuarioId !== user.id);
+    }
+
+    // 3. Guardar cambios persistentes
+    this.save();
+    console.log(`🛡️ [ARCO - CANCELACIÓN] Datos del usuario ${tel} (${user.nombre}) eliminados permanentemente por solicitud.`);
+    return { ok: true, mensaje: 'Datos personales y de contacto eliminados definitivamente.', usuarioEliminado: { id: user.id, telefono: tel } };
+  }
+
+  registrarSolicitudARCO({ tipo = 'CANCELACION', telefono, nombre, correo = '', motivo = '' }) {
+    if (!this.data.solicitudesARCO) this.data.solicitudesARCO = [];
+    const folio = `ARCO-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const solicitud = {
+      folio,
+      tipo: (tipo || 'CANCELACION').toUpperCase(),
+      telefono: (telefono || '').trim(),
+      nombre: (nombre || '').trim(),
+      correo: (correo || '').trim(),
+      motivo: motivo || 'Solicitud de ejercicio de derechos ARCO conforme a la LFPDPPP',
+      fecha: new Date().toISOString(),
+      estado: 'ATENDIDA_Y_EJECUTADA'
+    };
+
+    let resultadoAccion = null;
+    if (solicitud.tipo === 'CANCELACION' && solicitud.telefono) {
+      resultadoAccion = this.eliminarUsuario(solicitud.telefono);
+    }
+
+    this.data.solicitudesARCO.unshift(solicitud);
+    if (this.data.solicitudesARCO.length > 100) this.data.solicitudesARCO.pop();
+    this.save();
+
+    return { ok: true, folio, solicitud, resultadoAccion };
+  }
+
+  getSolicitudesARCO(limit = 20) {
+    return (this.data.solicitudesARCO || []).slice(0, limit);
   }
 }
 

@@ -770,6 +770,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (userForm) {
     userForm.addEventListener('submit', e => {
       e.preventDefault();
+      const consentCheck = document.getElementById('ck-legal-consent');
+      if (consentCheck && !consentCheck.checked) {
+        showToast('⚠️ Debes aceptar los Términos y el Aviso de Privacidad para el tratamiento de tu ubicación.', 'danger');
+        return;
+      }
+
       const nombre = document.getElementById('input-user-name').value;
       const telPropio = document.getElementById('input-user-phone').value;
       const nombreContacto = document.getElementById('input-contact-name').value;
@@ -783,7 +789,8 @@ document.addEventListener('DOMContentLoaded', () => {
           telefonoPropio: telPropio,
           nombreContacto,
           telefonoContacto: telContacto,
-          suscripcionActiva: AppState.user.suscripcionActiva
+          suscripcionActiva: AppState.user.suscripcionActiva,
+          consentimientoLegal: true
         })
       })
         .then(res => res.json())
@@ -795,8 +802,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('mobile-display-name').textContent = nombre;
             document.getElementById('whatsapp-target-name').textContent = nombreContacto;
             document.getElementById('whatsapp-target-phone').textContent = telContacto;
-            showToast('👤 Perfil y contacto de emergencia actualizados con éxito.', 'safe');
+            showToast('👤 Perfil, contacto y consentimiento legal guardados con éxito.', 'safe');
+          } else {
+            showToast(`❌ Error: ${data.error || 'No se pudo guardar'}`, 'danger');
           }
+        })
+        .catch(err => {
+          showToast(`❌ Error de conexión: ${err.message}`, 'danger');
         });
     });
   }
@@ -1331,6 +1343,81 @@ function copiarTexto(elementId) {
   }
 }
 
+// --- FUNCIONES LEGALES & DERECHOS ARCO (LFPDPPP) ---
+function abrirModalARCO() {
+  const modal = document.getElementById('arco-modal-backdrop');
+  if (modal) {
+    modal.style.display = 'flex';
+    const telInput = document.getElementById('arco-modal-phone');
+    if (telInput && AppState.user.telefono) {
+      telInput.value = AppState.user.telefono;
+    }
+  }
+}
+
+function cerrarModalARCO() {
+  const modal = document.getElementById('arco-modal-backdrop');
+  if (modal) {
+    modal.style.display = 'none';
+    const status = document.getElementById('arco-modal-status');
+    if (status) status.style.display = 'none';
+  }
+}
+
+async function enviarSolicitudARCOModal(e) {
+  e.preventDefault();
+  const tipo = document.getElementById('arco-modal-tipo').value;
+  const telefono = document.getElementById('arco-modal-phone').value.trim();
+  const motivo = document.getElementById('arco-modal-motivo').value.trim();
+  const statusDiv = document.getElementById('arco-modal-status');
+  const btn = document.getElementById('btn-submit-arco');
+
+  if (!telefono) {
+    showToast('Ingresa tu teléfono registrado para procesar la solicitud.', 'danger');
+    return;
+  }
+
+  statusDiv.style.display = 'block';
+  statusDiv.style.background = 'rgba(6, 182, 212, 0.15)';
+  statusDiv.style.border = '1px solid #06b6d4';
+  statusDiv.style.color = '#38bdf8';
+  statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Transmitiendo y ejecutando solicitud ARCO...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/usuario/arco', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tipo, telefono, motivo })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
+      statusDiv.style.border = '1px solid #10b981';
+      statusDiv.style.color = '#34d399';
+      statusDiv.innerHTML = `✅ <strong>Solicitud ${tipo} Ejecutada</strong><br>Folio de Control Legal: <code>${data.folio}</code><br>${tipo === 'CANCELACION' ? 'Todos tus datos y registros telemáticos han sido eliminados de la base de datos de Ruta Segura.' : 'Tu solicitud ha sido registrada y formalizada.'}`;
+      showToast(`🛡️ Solicitud ARCO procesada con éxito (Folio: ${data.folio})`, 'safe');
+      if (tipo === 'CANCELACION') {
+        AppState.user.nombre = 'Usuario';
+        AppState.user.telefono = '';
+      }
+    } else {
+      statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+      statusDiv.style.border = '1px solid #ef4444';
+      statusDiv.style.color = '#f87171';
+      statusDiv.innerHTML = `⚠️ Aviso: ${data.error || 'No se pudo procesar la solicitud con ese número.'}`;
+    }
+  } catch (err) {
+    statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+    statusDiv.style.border = '1px solid #ef4444';
+    statusDiv.style.color = '#f87171';
+    statusDiv.innerHTML = `❌ Error de red: ${err.message}`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 // Expose state globally for browser testing and console access
 window.AppState = AppState;
 window.simularWebhookRevenueCat = simularWebhookRevenueCat;
@@ -1349,4 +1436,8 @@ window.actualizarEnlaceStreamerInput = actualizarEnlaceStreamerInput;
 window.copiarEnlaceAfiliado = copiarEnlaceAfiliado;
 window.copiarTexto = copiarTexto;
 window.activarGPSNativoReal = activarGPSNativoReal;
+window.abrirModalARCO = abrirModalARCO;
+window.cerrarModalARCO = cerrarModalARCO;
+window.enviarSolicitudARCOModal = enviarSolicitudARCOModal;
+
 

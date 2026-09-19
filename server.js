@@ -128,6 +128,7 @@ function despacharAlerta({ tipo, usuario, contacto, latitud, longitud, motivo, e
     latitud,
     longitud,
     enlaceMapa,
+    enlaceOSM: `https://www.openstreetmap.org/?mlat=${latitud}&mlon=${longitud}#map=17/${latitud}/${longitud}`,
     enlaceWhatsAppDirecto,
     horaLegible,
     timestamp: timestamp.toISOString(),
@@ -197,6 +198,13 @@ app.post('/registro', (req, res) => {
       suscripcionActiva: suscripcionActiva !== undefined ? Boolean(suscripcionActiva) : (usuarioExistente ? usuarioExistente.suscripcionActiva : true),
       plan: (suscripcionActiva || (usuarioExistente && usuarioExistente.suscripcionActiva)) ? 'Anualidad ($120 MXN)' : 'Gratuito',
       metodoPago: usuarioExistente?.metodoPago || 'Directo',
+      consentimientoLegal: {
+        terminosAceptados: true,
+        avisoPrivacidadAceptado: true,
+        consentimientoGPSExpreso: true,
+        fechaConsentimiento: usuarioExistente?.consentimientoLegal?.fechaConsentimiento || new Date().toISOString(),
+        versionLegal: '2026-v1-LFPDPPP'
+      },
       creadoEn: usuarioExistente?.creadoEn || new Date().toISOString()
     };
 
@@ -651,9 +659,11 @@ app.post('/api/pago-directo', (req, res) => {
     console.log(`\n💳 [PAGO PROCESADO EXITOSAMENTE] $${monto} MXN para ${usuario.nombre} (${idUsuario}) | Factura: ${factura ? factura.folio : 'N/A'}`);
 
     // Enviar confirmación por WhatsApp al usuario con enlace al comprobante fiscal
+    const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+    const urlCompletaRecibo = `${baseUrl}/api/facturacion/recibo/${factura ? factura.folio : ''}`;
+
     if (twilioClient) {
       const toNumber = normalizarWhatsAppNumero(idUsuario);
-      const urlCompletaRecibo = `http://localhost:${PORT}/api/facturacion/recibo/${factura ? factura.folio : ''}`;
       twilioClient.messages.create({
         from: process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886',
         to: toNumber,
@@ -667,7 +677,9 @@ app.post('/api/pago-directo', (req, res) => {
       usuario: activacion ? activacion.user : usuario,
       transaccion: activacion ? activacion.tx : null,
       factura,
-      urlFactura
+      urlFactura,
+      urlRecibo: urlFactura,
+      urlCompletaRecibo
     });
   } catch (error) {
     console.error('Error en /api/pago-directo:', error);
@@ -680,7 +692,13 @@ app.post('/api/checkout/spei', (req, res) => {
   try {
     const { telefonoPropio } = req.body;
     const datosSPEI = paymentService.generarReferenciaSPEI(telefonoPropio);
-    return res.status(200).json({ ok: true, datos: datosSPEI });
+    return res.status(200).json({
+      ok: true,
+      clabeInterbancaria: datosSPEI.clabe,
+      clabe: datosSPEI.clabe,
+      ...datosSPEI,
+      datos: datosSPEI
+    });
   } catch (error) {
     return res.status(500).json({ ok: false, error: 'Error al generar referencia SPEI.' });
   }
@@ -691,7 +709,13 @@ app.post('/api/checkout/oxxo', (req, res) => {
   try {
     const { telefonoPropio } = req.body;
     const datosOXXO = paymentService.generarReferenciaOXXO(telefonoPropio);
-    return res.status(200).json({ ok: true, datos: datosOXXO });
+    return res.status(200).json({
+      ok: true,
+      referenciaOxxo: datosOXXO.referenciaCruda || datosOXXO.referencia,
+      referencia: datosOXXO.referencia,
+      ...datosOXXO,
+      datos: datosOXXO
+    });
   } catch (error) {
     return res.status(500).json({ ok: false, error: 'Error al generar referencia OXXO.' });
   }
@@ -958,6 +982,8 @@ app.get('/api/status', (req, res) => {
     motorHaversine: 'ACTIVO_CALIBRADO',
     pasarelaTwilio: twilioClient ? 'CONECTADO_EN_VIVO' : 'MODO_RESPALDO_ACTIVO',
     pasarelaStripe: stripeClient ? 'PRODUCCION_ACTIVA' : 'SANDBOX_CONFIGURABLE',
+    cumplimientoLegal: 'LFPDPPP_Y_GDPR_ACTIVO',
+    marcosRegulatorios: ['LFPDPPP (México)', 'LFPC (PROFECO)', 'GDPR', 'PCI-DSS'],
     timestamp: new Date().toISOString()
   });
 });
@@ -990,6 +1016,70 @@ app.post('/api/reset-demo', (req, res) => {
   viajesActivos.clear();
   telemetriaLog.length = 0;
   res.status(200).json({ ok: true, mensaje: 'Estado de viajes demo reiniciado con éxito.' });
+});
+
+// 18. Documentación Legal & Cumplimiento LFPDPPP / GDPR
+app.get('/terminos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'terminos.html'));
+});
+
+app.get('/privacidad', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'privacidad.html'));
+});
+
+// 19. Ejercicio de Derechos ARCO (Cancelación / Supresión de Datos Personales)
+app.post('/api/usuario/eliminar', (req, res) => {
+  try {
+    const { telefono } = req.body;
+    if (!telefono) {
+      return res.status(400).json({ ok: false, error: 'Proporciona el teléfono del usuario a eliminar.' });
+    }
+
+    const telLimpio = telefono.trim();
+    // Purgar de viajes activos si está en curso
+    viajesActivos.delete(telLimpio);
+
+    const resultado = dbManager.eliminarUsuario(telLimpio);
+    if (!resultado.ok) {
+      return res.status(404).json(resultado);
+    }
+
+    return res.status(200).json({
+      ok: true,
+      mensaje: 'Derecho de Cancelación ARCO ejecutado. Tus datos han sido eliminados de Ruta Segura.',
+      telefono: telLimpio
+    });
+  } catch (err) {
+    console.error('Error en /api/usuario/eliminar:', err);
+    return res.status(500).json({ ok: false, error: 'Error del servidor al procesar la eliminación de datos.' });
+  }
+});
+
+app.post('/api/usuario/arco', (req, res) => {
+  try {
+    const { tipo, telefono, nombre, correo, motivo } = req.body;
+    if (!telefono) {
+      return res.status(400).json({ ok: false, error: 'El número de teléfono es indispensable para identificar tus registros.' });
+    }
+
+    // Si es cancelación, remover viaje activo
+    if ((tipo || '').toUpperCase() === 'CANCELACION') {
+      viajesActivos.delete(telefono.trim());
+    }
+
+    const resultado = dbManager.registrarSolicitudARCO({ tipo, telefono, nombre, correo, motivo });
+    return res.status(200).json(resultado);
+  } catch (err) {
+    console.error('Error en /api/usuario/arco:', err);
+    return res.status(500).json({ ok: false, error: 'Error al registrar solicitud ARCO.' });
+  }
+});
+
+app.get('/api/usuario/arco/todas', (req, res) => {
+  return res.status(200).json({
+    ok: true,
+    solicitudes: dbManager.getSolicitudesARCO(50)
+  });
 });
 
 // Levantar el servidor

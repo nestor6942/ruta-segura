@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aviso de Privacidad Integral — Ruta Segura</title>
+  <meta name="description" content="Aviso de privacidad integral para el tratamiento de datos personales y geolocalización satelital en tiempo real de conformidad con la LFPDPPP mexicana y normativas internacionales.">
+  <meta name="theme-color" content="#4f46e5">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .legal-container {
+      max-width: 960px;
+      margin: 2rem auto 4rem auto;
+      padding: 2.5rem 2rem;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+    .legal-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .legal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 9999px;
+      color: #34d399;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+    }
+    .legal-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+    .legal-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .legal-section {
+      margin-bottom: 2.2rem;
+    }
+    .legal-section h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .legal-section h2 i {
+      color: #10b981;
+      font-size: 1.1rem;
+    }
+    .legal-section p, .legal-section li {
+      color: #cbd5e1;
+      font-size: 0.94rem;
+      line-height: 1.7;
+      margin-bottom: 0.8rem;
+    }
+    .legal-section ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .highlight-card {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-left: 4px solid #6366f1;
+      border-radius: 8px;
+      padding: 1.2rem 1.4rem;
+      margin: 1.5rem 0;
+    }
+    .highlight-card h3 {
+      color: #a5b4fc;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+    .data-table th, .data-table td {
+      padding: 0.8rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: left;
+    }
+    .data-table th {
+      background: rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+      font-weight: 700;
+    }
+    .data-table td {
+      color: #cbd5e1;
+    }
+    .btn-back-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      margin-bottom: 1.5rem;
+    }
+    .btn-back-nav:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+    }
+    .arco-action-box {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <a href="index.html" class="brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="brand-info">
+        <h1>Ruta Segura</h1>
+        <p>Aviso de Privacidad Integral</p>
+      </div>
+    </a>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <a href="terminos.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+        <i class="fa-solid fa-scale-balanced"></i> Términos y Condiciones
+      </a>
+      <a href="index.html" class="btn-checkout-cta" style="text-decoration: none; padding: 0.5rem 1rem;">
+        <i class="fa-solid fa-arrow-left"></i> Volver a la App
+      </a>
+    </div>
+  </header>
+
+  <main class="legal-container">
+    <a href="index.html" class="btn-back-nav">
+      <i class="fa-solid fa-arrow-left"></i> Regresar al Centro de Control
+    </a>
+
+    <div class="legal-header">
+      <div class="legal-badge">
+        <i class="fa-solid fa-user-shield"></i> LFPDPPP &bull; Ley de Protección de Datos Personales
+      </div>
+      <h1 class="legal-title">Aviso de Privacidad Integral</h1>
+      <div class="legal-meta">
+        Fecha de entrada en vigor: 18 de Septiembre de 2026 &bull; Conforme a la <em>Ley Federal de Protección de Datos Personales en Posesión de los Particulares</em> (México) y estándares internacionales de protección de privacidad (GDPR).
+      </div>
+    </div>
+
+    <!-- SECCION 1: RESPONSABLE -->
+    <div class="legal-section">
+      <h2><i class="fa-solid fa-building-shield"></i> 1. Identidad y Domicilio del Responsable</h2>
+      <p>
+        <strong>Ruta Segura Technologies</strong> (en adelante, <em>"El Responsable"</em>), con domicilio fiscal y de operaciones en la Ciudad de México, México, y portal web oficial accesible en su dominio público, es el responsable legítimo del uso, tratamiento, almacenamiento y protección de sus datos personales.
+      </p>
+      <p>
+        En cumplimiento de los principios de <strong>licitud, consentimiento, información, calidad, finalidad, lealtad, proporcionalidad y responsabilidad</strong> tutelados por la LFPDPPP, ponemos a su disposición el presente Aviso de Privacidad.
+      </p>
+    </div>
+
+    <!-- SECCION 2: DATOS RECABADOS -->
+    <div class="legal-section">
+      <h2><i class="fa-solid fa-database"></i> 2. Datos Personales Recabados y Clasificación</h2>
+      <p>
+        Para la correcta prestación de los servicios de movilidad y auxilio, recabamos las siguientes categorías de datos:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Categoría</th>
+            <th>Datos Específicos</th>
+            <th>Tipo de Dato</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Identificación y Contacto</strong></td>
+            <td>Nombre completo, número de teléfono celular propio.</td>
+            <td>Ordinario</td>
+          </tr>
+          <tr>
+            <td><strong>Contactos de Emergencia</strong></td>
+            <td>Nombre del contacto de confianza (ej. familiar o pareja) y su número de teléfono celular (WhatsApp/SMS).</td>
+            <td>Ordinario (Terceros autorizados)</td>
+          </tr>
+          <tr>
+            <td><strong>Geolocalización Telemática</strong></td>
+            <td>Coordenadas satelitales GPS en tiempo real (latitud y longitud), velocidad de desplazamiento, nivel porcentual de batería del equipo y marcas de tiempo (timestamps).</td>
+            <td><strong>DATO PERSONAL SENSIBLE</strong> (Requiere consentimiento expreso)</td>
+          </tr>
+          <tr>
+            <td><strong>Datos Fiscales (Opcional)</strong></td>
+            <td>R.F.C., Razón Social o Nombre Fiscal, Régimen Fiscal, Uso de CFDI, Código Postal y correo electrónico para emisión de factura.</td>
+            <td>Fiscal / Contable</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-card">
+        <h3><i class="fa-solid fa-location-crosshairs"></i> Tratamiento Especial de Datos Sensibles (Geolocalización Satelital)</h3>
+        <p style="margin: 0; font-size: 0.9rem; color: #e0e7ff;">
+          Su <strong>ubicación satelital precisa en tiempo real</strong> es catalogada como dato personal sensible. Dicha información se recopila <strong>única y exclusivamente durante el periodo en que usted mantiene activo un viaje o monitoreo de seguridad</strong>. Al finalizar el viaje o presionar "Llegué a Salvo", el rastreo continuo cesa inmediatamente.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECCION 3: FINALIDADES -->
+    <div class="legal-section">
+      <h2><i class="fa-solid fa-bullseye"></i> 3. Finalidades del Tratamiento de Datos</h2>
+      <p>Sus datos personales son tratados para las siguientes finalidades:</p>
+
+      <h3 style="font-size: 1rem; color: #34d399; margin: 1rem 0 0.5rem 0;">A. Finalidades Primarias (Estrictamente necesarias para el servicio):</h3>
+      <ul>
+        <li>Monitorear de forma silenciosa y preventiva la ruta de desplazamiento durante sus traslados.</li>
+        <li>Ejecutar el motor matemático de Haversine para detectar posibles anomalías o detenciones no habituales mayores a 3 (tres) minutos.</li>
+        <li>Despachar alertas automáticas con el enlace de localización satelital a través de la API oficial de Twilio (WhatsApp y SMS) a su contacto de emergencia designado.</li>
+        <li>Atender y retransmitir la activación del Botón de Pánico SOS en tiempo real.</li>
+        <li>Gestionar la suscripción anual de $120.00 MXN mediante pasarelas de pago digitales (Stripe, Mercado Pago, SPEI, OXXO y RevenueCat).</li>
+        <li>Emitir y timbrar el Comprobante Fiscal Digital por Internet (CFDI 4.0) ante el SAT cuando el usuario lo solicite.</li>
+      </ul>
+
+      <h3 style="font-size: 1rem; color: #818cf8; margin: 1rem 0 0.5rem 0;">B. Finalidades Secundarias (No necesarias):</h3>
+      <ul>
+        <li>Generación de métricas de uso y telemetría de forma <strong>totalmente agregada, disociada y anónima</strong> para optimizar la precisión de los algoritmos de detección.</li>
+      </ul>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">
+        * En ningún caso vendemos, comercializamos, rentamos ni transferimos sus datos personales a intermediarios publicitarios, plataformas de marketing ni terceras empresas con fines de lucro.
+      </p>
+    </div>
+
+    <!-- SECCION 4: TRANSFERENCIAS -->
+    <div class="legal-section">
+      <h2><i class="fa-solid fa-network-wired"></i> 4. Transferencia de Datos Personales a Terceros Encargados</h2>
+      <p>
+        Para cumplir con las finalidades primarias del servicio, compartimos datos estrictamente indispensables con los siguientes proveedores tecnológicos debidamente certificados:
+      </p>
+      <ul>
+        <li><strong>Twilio Inc. (EE.UU.):</strong> Proveedor de telecomunicaciones encargado de la transmisión telemática de las alertas de WhatsApp y mensajes SMS a su contacto de emergencia.</li>
+        <li><strong>Stripe Payments / Mercado Pago:</strong> Pasarelas de procesamiento de transacciones financieras, operando bajo la norma internacional de seguridad de datos de la industria de tarjetas de pago (PCI-DSS Nivel 1).</li>
+        <li><strong>Proveedores Autorizados de Certificación (PAC - SAT):</strong> Transmisión de datos fiscales para el timbrado de facturas electrónicas oficiales en México.</li>
+      </ul>
+    </div>
+
+    <!-- SECCION 5: DERECHOS ARCO -->
+    <div class="legal-section">
+      <h2><i class="fa-solid fa-fingerprint"></i> 5. Ejercicio de Derechos ARCO y Derecho al Olvido</h2>
+      <p>
+        Usted, como titular de los datos personales, o su representante legal debidamente acreditado, tiene derecho en todo momento a ejercer sus derechos de <strong>Acceso, Rectificación, Cancelación y Oposición (ARCO)</strong>, así como a revocar el consentimiento que nos haya otorgado.
+      </p>
+      <ul>
+        <li><strong>Acceso:</strong> Conocer qué datos personales suyos tenemos registrados y cómo los utilizamos.</li>
+        <li><strong>Rectificación:</strong> Solicitar la corrección o actualización de sus datos o los de su contacto de emergencia.</li>
+        <li><strong>Cancelación (Derecho al Olvido):</strong> Solicitar la <strong>eliminación inmediata y definitiva</strong> de su perfil, coordenadas, teléfono y registros de nuestras bases de datos activas.</li>
+        <li><strong>Oposición:</strong> Oponerse al tratamiento de sus datos para finalidades específicas.</li>
+      </ul>
+
+      <!-- Formulario interactivo ARCO en vivo -->
+      <div class="arco-action-box">
+        <h3 style="color: #34d399; font-size: 1.1rem; margin-bottom: 0.5rem;">
+          <i class="fa-solid fa-trash-can"></i> Módulo Automatizado de Cancelación y Eliminación de Datos (ARCO)
+        </h3>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1rem;">
+          Si deseas dar de baja tu cuenta y borrar inmediatamente todos tus registros personales y de geolocalización de nuestro servidor, ingresa tu número telefónico registrado:
+        </p>
+
+        <form id="form-arco-inline" onsubmit="window.ejecutarSolicitudARCO(event)" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+          <input type="tel" id="arco-input-tel" class="form-input" placeholder="+525512345678" style="flex: 1; min-width: 200px;" required>
+          <button type="submit" class="btn-action-danger" style="padding: 0.7rem 1.4rem; white-space: nowrap;">
+            <i class="fa-solid fa-user-xmark"></i> Purgar mis Datos Personales
+          </button>
+        </form>
+        <div id="arco-inline-feedback" style="margin-top: 0.8rem; font-size: 0.85rem; display: none;"></div>
+      </div>
+
+      <p>
+        También puede enviar un correo formal a nuestro Oficial de Protección de Datos a: <strong>privacidad@rutasegura.lat</strong>, indicando su nombre, número telefónico y la descripción clara del derecho que desea ejercer.
+      </p>
+    </div>
+
+    <!-- SECCION 6: SEGURIDAD -->
+    <div class="legal-section">
+      <h2><i class="fa-solid fa-lock"></i> 6. Medidas de Seguridad y Cifrado</h2>
+      <p>
+        Implementamos salvaguardas técnicas, administrativas y físicas de vanguardia para salvaguardar sus datos:
+      </p>
+      <ul>
+        <li>Toda la comunicación entre su dispositivo móvil y nuestros servidores viaja cifrada de extremo a extremo mediante el protocolo <strong>TLS 1.3 con certificados SSL de 256 bits</strong>.</li>
+        <li>Las coordenadas históricas de viajes concluidos son purgadas de la memoria activa de los servidores periódicamente.</li>
+        <li>Acceso restringido a las bases de datos de producción mediante credenciales rotadas y registros de auditoría continua.</li>
+      </ul>
+    </div>
+
+    <!-- SECCION 7: MODIFICACIONES -->
+    <div class="legal-section">
+      <h2><i class="fa-solid fa-clock-rotate-left"></i> 7. Modificaciones al Aviso de Privacidad</h2>
+      <p>
+        El presente Aviso de Privacidad puede sufrir modificaciones o actualizaciones derivadas de reformas legislativas, criterios de las autoridades de transparencia (INAI) o mejoras en nuestras funciones de seguridad. Dichas modificaciones estarán siempre disponibles en esta misma dirección web.
+      </p>
+    </div>
+  </main>
+
+  <footer class="legal-footer" style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.82rem; border-top: 1px solid rgba(255,255,255,0.08);">
+    <div>&copy; 2026 Ruta Segura Technologies. Todos los derechos reservados.</div>
+    <div style="margin-top: 0.4rem;">
+      <a href="terminos.html" style="color: #818cf8; text-decoration: none; margin: 0 0.5rem;">Términos y Condiciones</a> &bull;
+      <a href="privacidad.html" style="color: #818cf8; text-decoration: none; margin: 0 0.5rem;">Aviso de Privacidad</a> &bull;
+      <a href="index.html" style="color: #818cf8; text-decoration: none; margin: 0 0.5rem;">Ir a la Aplicación</a>
+    </div>
+  </footer>
+
+  <script>
+    async function ejecutarSolicitudARCO(e) {
+      e.preventDefault();
+      const input = document.getElementById('arco-input-tel');
+      const feedback = document.getElementById('arco-inline-feedback');
+      const tel = input.value.trim();
+      if (!tel) return;
+
+      feedback.style.display = 'block';
+      feedback.style.color = '#38bdf8';
+      feedback.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando solicitud de cancelación ARCO en el servidor...';
+
+      try {
+        const res = await fetch('/api/usuario/arco', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tipo: 'CANCELACION',
+            telefono: tel,
+            motivo: 'Solicitud ejecutada por el titular desde el portal oficial de privacidad.'
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          feedback.style.color = '#34d399';
+          feedback.innerHTML = `✅ <strong>Solicitud ARCO Ejecutada Exitosamente</strong><br>Folio oficial: <code>${data.folio}</code><br>Tus datos personales y de ubicación han sido borrados de la base de datos de Ruta Segura.`;
+          input.value = '';
+        } else {
+          feedback.style.color = '#f87171';
+          feedback.innerHTML = `⚠️ Aviso: ${data.error || 'No se encontró un registro activo con ese teléfono o ya fue purgado.'}`;
+        }
+      } catch (err) {
+        feedback.style.color = '#f87171';
+        feedback.innerHTML = `❌ Error de conexión al procesar la solicitud: ${err.message}`;
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -281,6 +281,29 @@
                   </div>
                 </div>
 
+                <!-- CARD DE DESTINO DEL VIAJE -->
+                <div class="mobile-card" style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.3); margin-bottom: 0.8rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                    <div class="mobile-card-title" style="margin-bottom: 0; color: #a5b4fc;">
+                      <i class="fa-solid fa-map-pin" style="color: #6366f1;"></i> ¿A dónde vas? (Destino)
+                    </div>
+                    <span style="font-size: 0.68rem; color: #10b981; font-weight: 700;">
+                      <i class="fa-solid fa-satellite-dish"></i> GPS en Vivo
+                    </span>
+                  </div>
+
+                  <div style="position: relative; margin-top: 0.4rem; margin-bottom: 0.5rem;">
+                    <input type="text" id="input-trip-destination" class="form-input" placeholder="ej. Mi Casa, Trabajo, Universidad..." value="Mi Casa" style="padding-left: 2.2rem; font-size: 0.88rem; font-weight: 600;">
+                    <i class="fa-solid fa-location-dot" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #818cf8; font-size: 0.85rem;"></i>
+                  </div>
+
+                  <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                    <button type="button" class="dest-chip active" onclick="window.seleccionarChipDestino('Mi Casa', this)">🏠 Casa</button>
+                    <button type="button" class="dest-chip" onclick="window.seleccionarChipDestino('Mi Trabajo', this)">💼 Trabajo</button>
+                    <button type="button" class="dest-chip" onclick="window.seleccionarChipDestino('Universidad', this)">🎓 Escuela</button>
+                    <button type="button" class="dest-chip" onclick="window.seleccionarChipDestino('Aeropuerto', this)">✈️ Aeropuerto</button>
+                  </div>
+                </div>
                 <div class="trip-active-banner" id="mobile-active-trip-banner" style="display: none;">
                   <div class="trip-radar">
                     <i class="fa-solid fa-location-arrow"></i>
@@ -311,6 +334,8 @@
                 </div>
 
                 <div class="mobile-card" style="text-align: center;">
+                  <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Viajando Hacia:</div>
+                  <div style="font-size: 1.25rem; font-weight: 800; color: #10b981; margin: 0.2rem 0 0.6rem 0;" id="active-trip-dest-text">Mi Casa</div>
                   <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Distancia Recorrida</div>
                   <div style="font-size: 1.8rem; font-weight: 900; color: #6366f1; margin: 0.2rem 0;" id="mobile-dist-text">0.00 km</div>
                   <div style="font-size: 0.75rem; color: var(--text-dim);">Velocidad: <span id="mobile-speed-text" style="color: #fff; font-weight: 700;">0 km/h</span></div>
@@ -413,7 +438,7 @@
         <!-- COLUMN 2: CENTRAL INTERACTIVE MAP & COMMAND CONTROLS -->
         <div class="map-container-card glass-panel">
           <div class="glass-panel-header">
-            <h3><i class="fa-solid fa-map-location-dot" style="color: #6366f1;"></i> Telemetría GPS en Vivo (CDMX)</h3>
+            <h3><i class="fa-solid fa-map-location-dot" style="color: #6366f1;"></i> Telemetría GPS Satelital en Vivo</h3>
             <div style="display: flex; gap: 0.6rem; align-items: center;">
               <span class="mono" style="font-size: 0.78rem; color: #a5b4fc;">
                 Distancia: <strong id="live-distance-val">0.00 km</strong> | Vel: <strong id="live-speed-val">0 km/h</strong> | Bat: <strong id="live-battery-val">94%</strong>
@@ -428,9 +453,12 @@
                 Trayecto:
               </label>
               <select id="select-route-preset" class="select-custom">
-                <option value="reforma_polanco">Paseo de la Reforma ➔ Polanco (Oficinas)</option>
-                <option value="condesa_coyoacan">Parque México (Condesa) ➔ Coyoacán</option>
-                <option value="insurgentes_santafe">Insurgentes ➔ Centro Santa Fe</option>
+                <option value="gps_real" selected>🛰️ Mi Ubicación Satelital en Vivo (GPS Real)</option>
+                <optgroup label="── Demostraciones CDMX ──">
+                  <option value="reforma_polanco">Paseo de la Reforma ➔ Polanco (Oficinas)</option>
+                  <option value="condesa_coyoacan">Parque México (Condesa) ➔ Coyoacán</option>
+                  <option value="insurgentes_santafe">Insurgentes ➔ Centro Santa Fe</option>
+                </optgroup>
               </select>
             </div>
 
@@ -444,8 +472,8 @@
               <button class="btn-action-safe" id="btn-stop-trip" style="display: none;">
                 <i class="fa-solid fa-check"></i> Llegué a Salvo
               </button>
-              <button class="btn-action-primary" id="btn-sim-stop" style="display: none; background: #d97706;">
-                ⏱️ Simular Detención (+3 min)
+              <button class="btn-action-primary" id="btn-sim-stop" style="display: none; background: #d97706;" title="Prueba inmediata para verificar que el servidor de Twilio envíe el WhatsApp de parada anómala">
+                🚨 Probar Alerta Anti-Detención (Test Twilio)
               </button>
               <button class="btn-action-danger" id="btn-sos-web">
                 <i class="fa-solid fa-triangle-exclamation"></i> SOS Pánico

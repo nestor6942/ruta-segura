@@ -137,7 +137,8 @@ const AppState = {
   },
   trip: {
     activo: false,
-    rutaSeleccionada: 'reforma_polanco',
+    rutaSeleccionada: 'gps_real',
+    destino: 'Mi Casa',
     puntos: [],
     indicePuntoActual: 0,
     intervaloId: null,
@@ -224,6 +225,17 @@ function dibujarRutaPlanificada(rutaKey) {
 }
 
 // ==========================================
+
+function seleccionarChipDestino(dest, btn) {
+  if (typeof sfx !== 'undefined' && sfx.playClick) sfx.playClick();
+  const input = document.getElementById('input-trip-destination');
+  if (input) input.value = dest;
+  AppState.trip.destino = dest;
+
+  document.querySelectorAll('.dest-chip').forEach(c => c.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
 // 5. TRIP ENGINE & HAVERSINE TELEMETRY
 // ==========================================
 function iniciarViaje() {
@@ -242,6 +254,10 @@ function iniciarViaje() {
 
   // Actualizar UI Mobile y Botones
   actualizarUIViajeActivo(true);
+  const destino = document.getElementById('input-trip-destination')?.value.trim() || 'Mi Casa';
+  AppState.trip.destino = destino;
+  const destText = document.getElementById('active-trip-dest-text');
+  if (destText) destText.textContent = destino;
   showToast('🛡️ Monitoreo de Ruta Segura Activado con éxito.', 'safe');
 
   // Enviar primer punto al backend
@@ -1734,6 +1750,7 @@ function autoConfigurarVistaMovil() {
 
 // Expose state globally for browser testing and console access
 window.AppState = AppState;
+window.seleccionarChipDestino = seleccionarChipDestino;
 window.instalarPWA = instalarPWA;
 window.abrirModalIosInstall = abrirModalIosInstall;
 window.cerrarModalIosInstall = cerrarModalIosInstall;

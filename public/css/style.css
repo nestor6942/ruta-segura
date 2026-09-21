@@ -2023,3 +2023,22 @@ table.data-table tr:hover td {
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(16, 185, 129, 0.6);
 }
+
+/* Quick Destination Chips */
+.dest-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  padding: 0.22rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.dest-chip:hover, .dest-chip.active {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #818cf8;
+  color: #fff;
+  font-weight: 700;
+}

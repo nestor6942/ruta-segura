@@ -105,7 +105,8 @@ function despacharAlerta({ tipo, usuario, contacto, latitud, longitud, motivo, e
     mensajeWhatsapp = `🚨 *BOTÓN DE PÁNICO ACTIVADO* 🚨\n\n*${usuario.nombre}* ha presionado el botón de auxilio de *Ruta Segura* solicitando asistencia inmediata.\n\n📍 *Ubicación en tiempo real*: ${enlaceMapa}\n🕒 *Hora exacta*: ${horaLegible}\n🔋 *Batería*: ${extra?.bateria || '85%'}\n\nLlama inmediatamente a emergencias o al contacto.`;
   } else if (tipo === 'LLEGADA_A_SALVO') {
     titulo = '✅ LLEGADA CONFIRMADA';
-    mensajeWhatsapp = `✅ *RUTA SEGURA - LLEGADA A SALVO*\n\nHola *${contacto.nombreContacto}*, te informamos que *${usuario.nombre}* ha finalizado su viaje y confirmó su llegada con éxito.\n\n📍 *Punto de llegada*: ${enlaceMapa}\n🕒 *Hora*: ${horaLegible}\n\n¡Monitoreo completado con tranquilidad!`;
+    const destStr = (extra && extra.destino) ? ` a *${extra.destino}*` : '';
+    mensajeWhatsapp = `✅ *RUTA SEGURA - LLEGADA A SALVO*\n\nHola *${contacto.nombreContacto}*, te informamos que *${usuario.nombre}* ha finalizado su viaje y confirmó su llegada con éxito${destStr}.\n\n📍 *Punto de llegada*: ${enlaceMapa}\n🕒 *Hora*: ${horaLegible}\n\n¡Monitoreo completado con tranquilidad!`;
   } else if (tipo === 'BATERIA_CRITICA') {
     titulo = '🔋 ALERTA BATERÍA CRÍTICA (< 5%)';
     mensajeWhatsapp = `⚠️ *AVISO DE BATERÍA BAJA*\n\nHola *${contacto.nombreContacto}*, el teléfono de *${usuario.nombre}* tiene menos del 5% de batería y podría apagarse en breve.\n\n📍 *Última coordenada enviada*: ${enlaceMapa}\n🕒 *Hora*: ${horaLegible}`;
@@ -390,7 +391,7 @@ app.post('/api/panico', (req, res) => {
 // 4. Confirmación de Llegada a Salvo
 app.post('/api/llegada', (req, res) => {
   try {
-    const { telefonoPropio, latitud, longitud } = req.body;
+    const { telefonoPropio, latitud, longitud, destino } = req.body;
     const idUsuario = telefonoPropio || '+525512345678';
     const usuarioDB = dbManager.getUser(idUsuario);
 
@@ -401,7 +402,8 @@ app.post('/api/llegada', (req, res) => {
         contacto: usuarioDB.contactoEmergencia,
         latitud: Number(latitud) || 19.432608,
         longitud: Number(longitud) || -99.133209,
-        motivo: 'El usuario presionó "Llegué a Salvo". Viaje completado exitosamente.'
+        extra: { destino: destino || 'su destino' },
+        motivo: `El usuario presionó "Llegué a Salvo" en: ${destino || 'su destino'}.`
       });
     }
 

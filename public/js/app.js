@@ -523,6 +523,7 @@ function simularWebhookRevenueCat(tipoEvento) {
         showToast('⚠️ Suscripción cancelada / expirada en RevenueCat.', 'warning');
       }
       actualizarEstadoSuscripcionUI();
+  cargarPerfilGuardado();
       registrarEventoLog({
         tipo: `RC_${tipoEvento}`,
         descripcion: `Webhook de RevenueCat procesado ($120 MXN / 2 meses - ${AppState.user.nombre})`,
@@ -1421,8 +1422,231 @@ async function enviarSolicitudARCOModal(e) {
   }
 }
 
+
+// ==========================================
+// --- FUNCIONES DE PERFIL Y ENLACE DE NÚMEROS (LOCALSTORAGE & DB) ---
+// ==========================================
+function normalizarTelefono(tel) {
+  if (!tel) return '';
+  let clean = tel.toString().trim().replace(/[\s\-\(\)\.]/g, '');
+  if (!clean.startsWith('+')) {
+    if (clean.length === 10) clean = '+52' + clean;
+    else clean = '+' + clean;
+  }
+  return clean;
+}
+
+function cargarPerfilGuardado() {
+  try {
+    const raw = localStorage.getItem('ruta_segura_user_profile');
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (saved && saved.nombre) AppState.user.nombre = saved.nombre;
+      if (saved && saved.telefono) AppState.user.telefono = saved.telefono;
+      if (saved && saved.contacto) {
+        if (saved.contacto.nombre) AppState.user.contacto.nombre = saved.contacto.nombre;
+        if (saved.contacto.telefono) AppState.user.contacto.telefono = saved.contacto.telefono;
+      }
+    }
+  } catch (e) {
+    console.warn('Error leyendo perfil de localStorage:', e);
+  }
+  actualizarVistasPerfil();
+}
+
+function actualizarVistasPerfil() {
+  // 1. Nombre y Avatar del Usuario
+  const elNombre = document.getElementById('mobile-display-name');
+  if (elNombre) elNombre.textContent = AppState.user.nombre || 'Usuario Protegido';
+
+  const avatarEl = document.getElementById('mobile-avatar-circle');
+  if (avatarEl && AppState.user.nombre) {
+    const parts = AppState.user.nombre.trim().split(' ').filter(Boolean);
+    const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].substring(0, 2).toUpperCase();
+    avatarEl.textContent = initials;
+  }
+
+  // 2. Contacto de Emergencia en la tarjeta
+  const elContactNom = document.getElementById('mobile-contact-name');
+  if (elContactNom) elContactNom.textContent = AppState.user.contacto.nombre || 'Contacto Asignado';
+
+  const elContactTel = document.getElementById('mobile-contact-phone');
+  if (elContactTel) elContactTel.textContent = AppState.user.contacto.telefono || 'Sin teléfono';
+
+  // 3. Pantalla de Pánico SOS
+  const elSosTarget = document.getElementById('sos-target-display');
+  if (elSosTarget) {
+    elSosTarget.innerHTML = `${AppState.user.contacto.nombre} &bull; ${AppState.user.contacto.telefono}`;
+  }
+
+  // 4. Simulador de WhatsApp
+  const elWaTarget = document.getElementById('whatsapp-target-name');
+  if (elWaTarget) elWaTarget.textContent = AppState.user.contacto.nombre;
+
+  const elWaPhone = document.getElementById('whatsapp-target-phone');
+  if (elWaPhone) elWaPhone.textContent = `${AppState.user.contacto.telefono} • En línea`;
+
+  const elWaBubble = document.getElementById('wa-mock-bubble-text');
+  if (elWaBubble) {
+    elWaBubble.innerHTML = `Hola <span id="wa-mock-contact">${AppState.user.contacto.nombre}</span>, el sistema de protección de <strong id="wa-mock-user">${AppState.user.nombre}</strong> está activo para este viaje. Recibirás alertas inmediatas si se detecta cualquier anomalía.`;
+  }
+
+  // 5. Rellenar campos del Checkout si existen
+  const ckNom = document.getElementById('ck-nombre');
+  if (ckNom && (ckNom.value === 'Sofía Martínez' || !ckNom.value)) ckNom.value = AppState.user.nombre;
+
+  const ckTel = document.getElementById('ck-telefono');
+  if (ckTel && (ckTel.value === '+525512345678' || !ckTel.value)) ckTel.value = AppState.user.telefono;
+
+  const ckContNom = document.getElementById('ck-contacto-nombre');
+  if (ckContNom && (ckContNom.value === 'Bertha (Mamá)' || !ckContNom.value)) ckContNom.value = AppState.user.contacto.nombre;
+
+  const ckContTel = document.getElementById('ck-contacto-tel');
+  if (ckContTel && (ckContTel.value === '+525598765432' || !ckContTel.value)) ckContTel.value = AppState.user.contacto.telefono;
+}
+
+function abrirModalPerfil() {
+  const modal = document.getElementById('modal-perfil-backdrop');
+  if (!modal) return;
+  modal.style.display = 'flex';
+
+  const inUserNom = document.getElementById('perfil-user-name');
+  if (inUserNom) inUserNom.value = AppState.user.nombre || '';
+
+  const inUserTel = document.getElementById('perfil-user-phone');
+  if (inUserTel) inUserTel.value = AppState.user.telefono || '';
+
+  const inContNom = document.getElementById('perfil-contact-name');
+  if (inContNom) inContNom.value = AppState.user.contacto.nombre || '';
+
+  const inContTel = document.getElementById('perfil-contact-phone');
+  if (inContTel) inContTel.value = AppState.user.contacto.telefono || '';
+
+  const status = document.getElementById('perfil-status-feedback');
+  if (status) status.style.display = 'none';
+}
+
+function cerrarModalPerfil() {
+  const modal = document.getElementById('modal-perfil-backdrop');
+  if (modal) modal.style.display = 'none';
+}
+
+async function guardarPerfilUsuario(e) {
+  if (e) e.preventDefault();
+  sfx.playClick();
+
+  const nombre = document.getElementById('perfil-user-name').value.trim();
+  const rawTelPropio = document.getElementById('perfil-user-phone').value.trim();
+  const nombreContacto = document.getElementById('perfil-contact-name').value.trim();
+  const rawTelContacto = document.getElementById('perfil-contact-phone').value.trim();
+  const statusDiv = document.getElementById('perfil-status-feedback');
+  const btnSave = document.getElementById('btn-save-profile');
+
+  if (!nombre || !rawTelPropio || !nombreContacto || !rawTelContacto) {
+    showToast('⚠️ Completa todos los campos para enlazar tus números.', 'danger');
+    return;
+  }
+
+  const telPropio = normalizarTelefono(rawTelPropio);
+  const telContacto = normalizarTelefono(rawTelContacto);
+
+  if (btnSave) {
+    btnSave.disabled = true;
+    btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando y Enlazando...';
+  }
+
+  if (statusDiv) {
+    statusDiv.style.display = 'block';
+    statusDiv.style.background = 'rgba(6, 182, 212, 0.15)';
+    statusDiv.style.border = '1px solid #06b6d4';
+    statusDiv.style.color = '#38bdf8';
+    statusDiv.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Conectando con el servidor seguro y enlazando números...';
+  }
+
+  try {
+    const res = await fetch('/registro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre,
+        telefonoPropio: telPropio,
+        nombreContacto,
+        telefonoContacto: telContacto,
+        suscripcionActiva: AppState.user.suscripcionActiva,
+        consentimientoLegal: true
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      AppState.user.nombre = nombre;
+      AppState.user.telefono = telPropio;
+      AppState.user.contacto = {
+        nombre: nombreContacto,
+        telefono: telContacto
+      };
+
+      try {
+        localStorage.setItem('ruta_segura_user_profile', JSON.stringify(AppState.user));
+      } catch (errLocal) {}
+
+      actualizarVistasPerfil();
+
+      sfx.playSafeJingle();
+      if (statusDiv) {
+        statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
+        statusDiv.style.border = '1px solid #10b981';
+        statusDiv.style.color = '#34d399';
+        statusDiv.innerHTML = `✅ <strong>¡Números enlazados correctamente!</strong><br>Las alertas de WhatsApp se enviarán a <strong>${nombreContacto}</strong> (${telContacto}).`;
+      }
+
+      showToast(`✅ Perfil actualizado: números de ${nombre} y ${nombreContacto} enlazados.`, 'safe');
+
+      setTimeout(() => {
+        cerrarModalPerfil();
+      }, 1000);
+    } else {
+      throw new Error(data.error || 'El servidor no pudo procesar el registro.');
+    }
+  } catch (err) {
+    AppState.user.nombre = nombre;
+    AppState.user.telefono = telPropio;
+    AppState.user.contacto = {
+      nombre: nombreContacto,
+      telefono: telContacto
+    };
+    try {
+      localStorage.setItem('ruta_segura_user_profile', JSON.stringify(AppState.user));
+    } catch (errLocal) {}
+    actualizarVistasPerfil();
+
+    if (statusDiv) {
+      statusDiv.style.background = 'rgba(245, 158, 11, 0.15)';
+      statusDiv.style.border = '1px solid #f59e0b';
+      statusDiv.style.color = '#fbbf24';
+      statusDiv.innerHTML = `⚠️ <strong>Guardado en tu dispositivo:</strong> Los datos quedaron activos para este navegador.`;
+    }
+    showToast('⚠️ Datos guardados en tu teléfono.', 'safe');
+    setTimeout(() => {
+      cerrarModalPerfil();
+    }, 1200);
+  } finally {
+    if (btnSave) {
+      btnSave.disabled = false;
+      btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar y Enlazar Números';
+    }
+  }
+}
+
 // Expose state globally for browser testing and console access
 window.AppState = AppState;
+window.abrirModalPerfil = abrirModalPerfil;
+window.cerrarModalPerfil = cerrarModalPerfil;
+window.guardarPerfilUsuario = guardarPerfilUsuario;
+window.actualizarVistasPerfil = actualizarVistasPerfil;
+window.normalizarTelefono = normalizarTelefono;
+
 window.simularWebhookRevenueCat = simularWebhookRevenueCat;
 window.detonarBotonPanico = detonarBotonPanico;
 window.iniciarViaje = iniciarViaje;

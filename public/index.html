@@ -45,6 +45,9 @@
       <button class="nav-btn" data-tab="tab-simulator" id="nav-tab-simulator">
         <i class="fa-solid fa-location-dot"></i> Rastreador GPS en Vivo
       </button>
+      <button class="nav-btn" onclick="window.abrirModalPerfil()" id="nav-btn-perfil" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); color: #c7d2fe;">
+        <i class="fa-solid fa-user-gear"></i> Mis Datos y Contacto
+      </button>
       <a href="/terminos" class="nav-btn" style="text-decoration: none; color: #cbd5e1; display: inline-flex; align-items: center; gap: 0.4rem;">
         <i class="fa-solid fa-scale-balanced"></i> Términos
       </a>
@@ -237,17 +240,22 @@
               <!-- SCREEN 1: HOME -->
               <div id="screen-home" class="native-screen active">
                 <div class="mobile-header-bar">
-                  <div class="user-profile-badge">
-                    <div class="avatar-circle">SM</div>
+                  <div class="user-profile-badge" onclick="window.abrirModalPerfil()" style="cursor: pointer;" title="Toca para editar tu nombre y teléfonos">
+                    <div class="avatar-circle" id="mobile-avatar-circle">SM</div>
                     <div>
-                      <div style="font-weight: 800; font-size: 0.95rem;" id="mobile-display-name">Sofía Martínez</div>
+                      <div style="font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;"><span id="mobile-display-name">Sofía Martínez</span> <i class="fa-solid fa-pen" style="font-size: 0.65rem; color: #a5b4fc; opacity: 0.85;"></i></div>
                       <div style="font-size: 0.72rem; color: #10b981;" id="mobile-plan-tag">● Suscripción Activa ($120/2 meses)</div>
                     </div>
                   </div>
                 </div>
 
                 <div class="mobile-card">
-                  <div class="mobile-card-title">Contacto de Emergencia Asignado</div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+                    <div class="mobile-card-title" style="margin-bottom: 0;">Contacto de Emergencia</div>
+                    <button type="button" onclick="window.abrirModalPerfil()" style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.5); color: #c7d2fe; border-radius: 6px; padding: 0.22rem 0.55rem; font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;">
+                      <i class="fa-solid fa-pen-to-square"></i> Enlazar
+                    </button>
+                  </div>
                   <div style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
                       <div style="font-weight: 700; font-size: 0.9rem;" id="mobile-contact-name">Bertha (Mamá)</div>
@@ -328,7 +336,7 @@
                 <div class="mobile-card" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.06);">
                   <div style="font-size: 0.75rem; color: #fca5a5; line-height: 1.4;">
                     <strong>Destinatario Inmediato:</strong><br>
-                    Bertha (Mamá) &bull; +52 55 9876 5432
+                    <span id="sos-target-display">Bertha (Mamá) &bull; +52 55 9876 5432</span>
                   </div>
                 </div>
               </div>
@@ -455,7 +463,7 @@
                 <div style="font-weight: 800; font-size: 0.82rem; margin-bottom: 0.2rem; color: #34d399;">
                   🛡️ RUTA SEGURA BOT
                 </div>
-                <div>Hola Bertha, el sistema de protección de <strong>Sofía</strong> está activo para este viaje. Recibirás alertas inmediatas si se detecta cualquier anomalía.</div>
+                <div id="wa-mock-bubble-text">Hola <span id="wa-mock-contact">Bertha</span>, el sistema de protección de <strong id="wa-mock-user">Sofía</strong> está activo para este viaje. Recibirás alertas inmediatas si se detecta cualquier anomalía.</div>
                 <div class="bubble-time">10:30 PM • Conectado vía Twilio</div>
               </div>
             </div>
@@ -489,6 +497,81 @@
     </section>
 
   </main>
+
+  <!-- ==========================================
+       MODAL: CONFIGURAR MIS DATOS Y CONTACTO DE EMERGENCIA
+       ========================================== -->
+  <div class="checkout-modal-backdrop" id="modal-perfil-backdrop" style="display: none;" onclick="if(event.target===this) window.cerrarModalPerfil()">
+    <div class="checkout-modal-card" style="max-width: 520px;">
+      <button class="btn-modal-close" onclick="window.cerrarModalPerfil()">✕</button>
+
+      <div class="checkout-modal-header" style="text-align: left; margin-bottom: 1.4rem;">
+        <div style="display: flex; align-items: center; gap: 0.8rem;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #fff; flex-shrink: 0;">
+            <i class="fa-solid fa-user-gear"></i>
+          </div>
+          <div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0;">Mis Datos & Contacto</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Enlaza tu teléfono y el de tu pareja/familiar para alertas de WhatsApp</p>
+          </div>
+        </div>
+      </div>
+
+      <form id="form-perfil-usuario" onsubmit="window.guardarPerfilUsuario(event)">
+        <!-- Card 1: Datos del Viajero -->
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+          <div style="font-weight: 700; font-size: 0.85rem; color: #a5b4fc; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-user-astronaut"></i> 1. Tu Perfil (Quién realiza los viajes)
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label" for="perfil-user-name">Tu Nombre Completo:</label>
+            <input type="text" id="perfil-user-name" class="form-input" placeholder="ej. Néstor" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="perfil-user-phone">Tu Número Celular (WhatsApp):</label>
+            <input type="tel" id="perfil-user-phone" class="form-input" placeholder="ej. +52 33 3595 2229" required>
+            <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 4px;">Este número transmite tu telemetría GPS y estado de batería.</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Contacto de Auxilio (Pareja) -->
+        <div style="background: rgba(37, 211, 102, 0.05); border: 1px solid rgba(37, 211, 102, 0.25); border-radius: 12px; padding: 1rem; margin-bottom: 1.1rem;">
+          <div style="font-weight: 700; font-size: 0.85rem; color: #34d399; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-brands fa-whatsapp"></i> 2. Contacto de Emergencia (Quién recibe las alertas)
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label" for="perfil-contact-name">Nombre de tu Pareja o Familiar:</label>
+            <input type="text" id="perfil-contact-name" class="form-input" placeholder="ej. Mi Pareja / Mamá" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="perfil-contact-phone">Teléfono WhatsApp de tu Contacto:</label>
+            <input type="tel" id="perfil-contact-phone" class="form-input" placeholder="ej. +52 33 1234 5678" required>
+            <span style="font-size: 0.72rem; color: #86efac; display: block; margin-top: 4px;">A este número Twilio enviará las alertas satelitales con mapa si te detienes más de 3 min o pulsas SOS.</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(99, 102, 241, 0.08); border-radius: 8px; padding: 0.75rem; margin-bottom: 1.1rem; font-size: 0.75rem; color: #cbd5e1; display: flex; gap: 8px; align-items: flex-start;">
+          <i class="fa-solid fa-circle-info" style="color: #818cf8; margin-top: 2px;"></i>
+          <span>Ambos números quedan enlazados en el servidor en tiempo real. Puedes actualizarlos cuantas veces quieras gratis.</span>
+        </div>
+
+        <div id="perfil-status-feedback" style="display: none; margin-bottom: 1rem; padding: 0.75rem; border-radius: 8px; font-size: 0.8rem;"></div>
+
+        <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+          <button type="button" class="btn-action-primary" onclick="window.cerrarModalPerfil()" style="background: rgba(255,255,255,0.08); color: #cbd5e1;">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-action-primary" id="btn-save-profile" style="background: linear-gradient(135deg, #10b981, #059669); font-weight: 800;">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar y Enlazar Números
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- ==========================================
        CHECKOUT MODAL (PASARELA MULTI-PAGO $120 MXN)
@@ -539,6 +622,16 @@
           </div>
         </div>
 
+        <div class="form-row-2" style="background: rgba(37, 211, 102, 0.05); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(37, 211, 102, 0.25); margin-bottom: 0.8rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="ck-contacto-nombre" style="color: #34d399;"><i class="fa-solid fa-heart"></i> Nombre Contacto de Auxilio:</label>
+            <input type="text" id="ck-contacto-nombre" class="form-input" placeholder="ej. Mi Pareja / Mamá" value="Bertha (Mamá)" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="ck-contacto-tel" style="color: #34d399;"><i class="fa-brands fa-whatsapp"></i> WhatsApp del Contacto:</label>
+            <input type="tel" id="ck-contacto-tel" class="form-input" placeholder="ej. +52 33 9876 5432" value="+525598765432" required>
+          </div>
+        </div>
         <div class="form-row-2">
           <div class="form-group">
             <label class="form-label" for="ck-correo">Correo Electrónico (Para envío de recibo):</label>

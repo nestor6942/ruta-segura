@@ -296,32 +296,9 @@ app.post('/ubicacion', (req, res) => {
       viaje.ultimoUpdate = ahora;
 
       // REGLA DE NEGOCIO: Si se movió menos de 20 metros, se considera "DETENIDO"
-      if (distancia < 20) {
-        const tiempoSinMoverseMinutos = (ahora - viaje.tiempoDetenido) / 1000 / 60;
-        console.log(`⚠️ [PRECAUCIÓN] Sin movimiento significativo por ${tiempoSinMoverseMinutos.toFixed(2)} min (${distancia.toFixed(1)} m recorridos)`);
-
-        // Si pasan más de 3 minutos detenido sin confirmación -> DISPARAR ALERTA
-        if (tiempoSinMoverseMinutos >= 3 && viaje.alertasDisparadas === 0) {
-          console.log(`🚨 ¡ALERTA DE SEGURIDAD DETONADA POR DETENCIÓN PROLONGADA!`);
-          estadoAlerta = despacharAlerta({
-            tipo: 'DETENCION_SOSPECHOSA',
-            usuario: usuarioDB,
-            contacto: usuarioDB.contactoEmergencia,
-            latitud,
-            longitud,
-            motivo: `Detención anómala en la misma coordenada por ${tiempoSinMoverseMinutos.toFixed(1)} minutos.`,
-            extra: { bateria: `${puntoTelemetria.bateria}%` }
-          });
-          viaje.alertasDisparadas += 1;
-          viaje.tiempoDetenido = ahora; // Reset para no spamear continuamente
-        }
-      } else {
-        // Se está moviendo con normalidad
-        console.log(`✅ [EN MOVIMIENTO] Avanzó ${distancia.toFixed(1)} m. Ruta en orden.`);
-        viaje.ultimaLat = Number(latitud);
-        viaje.ultimaLon = Number(longitud);
-        viaje.tiempoDetenido = ahora; // Resetea cronómetro de detención
-      }
+      // Monitoreo continuo de telemetría y avance GPS (Sin falsas alarmas por tráfico o semáforos)
+      viaje.ultimaLat = Number(latitud);
+      viaje.ultimaLon = Number(longitud);
     }
 
     // Regla de Batería Crítica (< 5%)

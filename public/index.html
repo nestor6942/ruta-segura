@@ -334,7 +334,7 @@
                   </div>
                   <div style="font-weight: 800; font-size: 0.95rem; color: #10b981;">Monitoreo GPS Silencioso</div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;" id="mobile-trip-status">
-                    Calculando detenciones anómalas (Haversine)
+                    Telemetría Satelital y Protección Activa
                   </div>
                 </div>
 
@@ -426,7 +426,7 @@
                 <ul style="list-style: none; font-size: 0.78rem; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
                   <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Rastreo en segundo plano sin drenar batería</li>
                   <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Notificaciones de WhatsApp automáticas vía Twilio</li>
-                  <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Detección de detenciones anómalas (3 min)</li>
+                  <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Botón SOS de Pánico Inmediato por WhatsApp</li>
                   <li><i class="fa-solid fa-check" style="color: #10b981; margin-right: 6px;"></i> Botón de pánico con coordenadas satelitales</li>
                 </ul>
 
@@ -495,9 +495,6 @@
               </button>
               <button class="btn-action-safe" id="btn-stop-trip" style="display: none;">
                 <i class="fa-solid fa-check"></i> Llegué a Salvo
-              </button>
-              <button class="btn-action-primary" id="btn-sim-stop" style="display: none; background: #d97706;" title="Prueba inmediata para verificar que el servidor de Twilio envíe el WhatsApp de parada anómala">
-                🚨 Probar Alerta Anti-Detención (Test Twilio)
               </button>
               <button class="btn-action-danger" id="btn-sos-web">
                 <i class="fa-solid fa-triangle-exclamation"></i> SOS Pánico
@@ -1014,7 +1011,7 @@
           <span style="font-size: 1.2rem; font-weight: 800; color: white;">Ruta Segura</span>
         </div>
         <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.6;">
-          Plataforma tecnológica de movilidad y prevención telemática. Monitoreo inteligente de trayectos, detección de detenciones anómalas con algoritmo Haversine y alertas automáticas por WhatsApp a tus familiares.
+          Plataforma tecnológica de movilidad y prevención telemática. Monitoreo inteligente de trayectos, telemetría satelital en vivo, botón de auxilio SOS y confirmación de llegada a salvo por WhatsApp.
         </p>
         <div style="margin-top: 1rem; font-size: 0.82rem; color: #10b981; display: flex; align-items: center; gap: 0.4rem;">
           <i class="fa-solid fa-lock"></i> Cifrado de extremo a extremo TLS 1.3

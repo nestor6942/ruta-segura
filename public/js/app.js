@@ -149,8 +149,8 @@ const AppState = {
     puntos: [],
     indicePuntoActual: 0,
     intervaloId: null,
-    enDetencionSimulada: false,
-    tiempoDetenidoSegundos: 0,
+    
+    
     distanciaRecorridaMetros: 0,
     horaInicio: null,
     velocidadKmh: 35,
@@ -256,8 +256,8 @@ function iniciarViaje() {
   AppState.trip.indicePuntoActual = 0;
   AppState.trip.distanciaRecorridaMetros = 0;
   AppState.trip.horaInicio = Date.now();
-  AppState.trip.enDetencionSimulada = false;
-  AppState.trip.tiempoDetenidoSegundos = 0;
+  
+  
 
   const ruta = PRESET_ROUTES[AppState.trip.rutaSeleccionada];
   AppState.trip.puntos = ruta.coordenadas;
@@ -319,25 +319,7 @@ function cicloTelemetriaGPS() {
 
   const ruta = AppState.trip.puntos;
 
-  if (AppState.trip.enDetencionSimulada) {
-    // Modo de Detención Sospechosa Simulada (< 20 metros)
-    AppState.trip.tiempoDetenidoSegundos += 45; // Acelerar el reloj para demostración
-    const puntoActual = ruta[AppState.trip.indicePuntoActual];
-    AppState.trip.velocidadKmh = 0;
 
-    document.getElementById('live-speed-val').textContent = '0 km/h (Detenido)';
-    document.getElementById('mobile-trip-status').innerHTML = `⚠️ <span style="color:#f59e0b;">Detenido hace ${(AppState.trip.tiempoDetenidoSegundos / 60).toFixed(1)} min</span>`;
-
-    // Enviar la misma coordenada repetidamente al backend
-    enviarPuntoABackend(puntoActual);
-
-    if (AppState.trip.tiempoDetenidoSegundos >= 180) {
-      // 3 Minutos cumplidos -> Se dispara alerta de detención sospechosa
-      sfx.playSosAlarm();
-      showToast('🚨 ALERTA: Detención prolongada de más de 3 minutos detectada.', 'danger');
-    }
-    return;
-  }
 
   // Movimiento Normal
   if (AppState.trip.indicePuntoActual < ruta.length - 1) {
@@ -636,21 +618,21 @@ function switchMobileScreen(screenId) {
 function actualizarUIViajeActivo(activo) {
   const btnStart = document.getElementById('btn-start-trip');
   const btnStop = document.getElementById('btn-stop-trip');
-  const btnSimStop = document.getElementById('btn-sim-stop');
+  
   const mobileBanner = document.getElementById('mobile-active-trip-banner');
   const mobileStartBtn = document.getElementById('mobile-btn-start');
 
   if (activo) {
     if (btnStart) btnStart.style.display = 'none';
     if (btnStop) btnStop.style.display = 'inline-flex';
-    if (btnSimStop) btnSimStop.style.display = 'inline-flex';
+    
     if (mobileBanner) mobileBanner.style.display = 'block';
     if (mobileStartBtn) mobileStartBtn.textContent = 'En Ruta Segura (Activo)';
     switchMobileScreen('screen-active-trip');
   } else {
     if (btnStart) btnStart.style.display = 'inline-flex';
     if (btnStop) btnStop.style.display = 'none';
-    if (btnSimStop) btnSimStop.style.display = 'none';
+    
     if (mobileBanner) mobileBanner.style.display = 'none';
     if (mobileStartBtn) mobileStartBtn.textContent = '🛡️ Iniciar Ruta Segura';
   }
@@ -770,24 +752,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileBtnArrival = document.getElementById('mobile-btn-arrival');
   if (mobileBtnArrival) mobileBtnArrival.addEventListener('click', () => detenerViaje(true));
 
-  // Simulated 3-min stop trigger
-  const btnSimStop = document.getElementById('btn-sim-stop');
-  if (btnSimStop) {
-    btnSimStop.addEventListener('click', () => {
-      sfx.playClick();
-      AppState.trip.enDetencionSimulada = !AppState.trip.enDetencionSimulada;
-      if (AppState.trip.enDetencionSimulada) {
-        btnSimStop.textContent = '▶️ Reanudar Movimiento';
-        btnSimStop.style.background = '#f59e0b';
-        showToast('⚠️ Detención anómala iniciada: El cronómetro de seguridad ha empezado a contar.', 'warning');
-      } else {
-        btnSimStop.textContent = '⏱️ Simular Detención (+3 min)';
-        btnSimStop.style.background = '';
-        AppState.trip.tiempoDetenidoSegundos = 0;
-        showToast('✅ Movimiento restablecido.', 'safe');
-      }
-    });
-  }
+  
 
   // SOS Panic Triggers
   const btnSosMain = document.getElementById('btn-sos-main');

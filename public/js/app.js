@@ -169,9 +169,9 @@ function initLeafletMap() {
   }).setView([19.432608, -99.133209], 13);
 
   // Tiles Oscuros Modernos (CartoDB Dark Matter)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    subdomains: 'abcd'
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(AppState.map);
 
   // Icono Personalizado para el Usuario

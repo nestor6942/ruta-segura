@@ -524,6 +524,7 @@ function simularWebhookRevenueCat(tipoEvento) {
       }
       actualizarEstadoSuscripcionUI();
   cargarPerfilGuardado();
+  autoConfigurarVistaMovil();
       registrarEventoLog({
         tipo: `RC_${tipoEvento}`,
         descripcion: `Webhook de RevenueCat procesado ($120 MXN / 2 meses - ${AppState.user.nombre})`,
@@ -600,6 +601,9 @@ function switchMobileScreen(screenId) {
   const navBtn = document.querySelector(`[data-mobile-screen="${screenId}"]`);
 
   if (screen) screen.classList.add('active');
+  if (AppState.map) {
+    setTimeout(() => AppState.map.invalidateSize(), 200);
+  }
   if (navBtn) navBtn.classList.add('active');
 }
 
@@ -1639,8 +1643,102 @@ async function guardarPerfilUsuario(e) {
   }
 }
 
+
+// ==========================================
+// --- PWA SERVICE WORKER & NATIVE APP INSTALLATION ---
+// ==========================================
+let deferredInstallPrompt = null;
+const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isPwaStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+// 1. Registro del Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('🛡️ [PWA] Service Worker activo en:', reg.scope))
+      .catch(err => console.warn('⚠️ [PWA] Error en Service Worker:', err));
+  });
+}
+
+// 2. Captura del evento de instalación nativa en Android / Chrome
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+
+  const btnNav = document.getElementById('btn-install-app');
+  if (btnNav && !isPwaStandalone) btnNav.style.display = 'inline-flex';
+
+  const banner = document.getElementById('mobile-install-banner');
+  if (banner && !isPwaStandalone) banner.style.display = 'flex';
+});
+
+// 3. Si la app ya se instaló con éxito
+window.addEventListener('appinstalled', () => {
+  showToast('🎉 ¡Ruta Segura instalada con éxito en tu pantalla de inicio!', 'safe');
+  const banner = document.getElementById('mobile-install-banner');
+  if (banner) banner.style.display = 'none';
+  const btnNav = document.getElementById('btn-install-app');
+  if (btnNav) btnNav.style.display = 'none';
+  deferredInstallPrompt = null;
+});
+
+function instalarPWA() {
+  sfx.playClick();
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') {
+        showToast('📲 Agregando aplicación a tu pantalla principal...', 'safe');
+        const banner = document.getElementById('mobile-install-banner');
+        if (banner) banner.style.display = 'none';
+      }
+      deferredInstallPrompt = null;
+    });
+  } else if (isIosDevice) {
+    abrirModalIosInstall();
+  } else {
+    // Si está en Chrome o navegador Android sin prompt automático disponible
+    showToast('💡 Toca el menú de tu navegador (tres puntos ⋮ arriba a la derecha) y selecciona "Instalar aplicación" o "Agregar a la pantalla principal".', 'info');
+  }
+}
+
+function abrirModalIosInstall() {
+  const modal = document.getElementById('modal-ios-install');
+  if (modal) modal.style.display = 'flex';
+}
+
+function cerrarModalIosInstall() {
+  const modal = document.getElementById('modal-ios-install');
+  if (modal) modal.style.display = 'none';
+}
+
+// 4. Auto-detección móvil: Si abre desde un celular o como PWA instalada, abrir el simulador directamente
+function autoConfigurarVistaMovil() {
+  const isMobile = window.innerWidth <= 850 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile || window.location.search.includes('pwa=1') || isPwaStandalone) {
+    switchTab('tab-simulator');
+
+    // Si ya corre en modo standalone (instalada), ocultar botones de instalar
+    if (isPwaStandalone) {
+      const banner = document.getElementById('mobile-install-banner');
+      if (banner) banner.style.display = 'none';
+      const btnNav = document.getElementById('btn-install-app');
+      if (btnNav) btnNav.style.display = 'none';
+    } else {
+      // Mostrar botón en navbar si es móvil
+      const btnNav = document.getElementById('btn-install-app');
+      if (btnNav) btnNav.style.display = 'inline-flex';
+    }
+  }
+}
+
 // Expose state globally for browser testing and console access
 window.AppState = AppState;
+window.instalarPWA = instalarPWA;
+window.abrirModalIosInstall = abrirModalIosInstall;
+window.cerrarModalIosInstall = cerrarModalIosInstall;
+window.autoConfigurarVistaMovil = autoConfigurarVistaMovil;
+
 window.abrirModalPerfil = abrirModalPerfil;
 window.cerrarModalPerfil = cerrarModalPerfil;
 window.guardarPerfilUsuario = guardarPerfilUsuario;

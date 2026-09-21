@@ -249,6 +249,20 @@
                   </div>
                 </div>
 
+                <div class="mobile-install-card" id="mobile-install-banner" onclick="window.instalarPWA()">
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #10b981); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #fff; flex-shrink: 0;">
+                      <i class="fa-solid fa-cloud-arrow-down"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 800; font-size: 0.85rem; color: #fff;">Instalar en mi Celular</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">Toca para usarla como App a pantalla completa</div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-action-primary" onclick="event.stopPropagation(); window.instalarPWA()" style="padding: 0.35rem 0.8rem; font-size: 0.75rem; border-radius: 6px; font-weight: 700; white-space: nowrap;">
+                    Instalar
+                  </button>
+                </div>
                 <div class="mobile-card">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
                     <div class="mobile-card-title" style="margin-bottom: 0;">Contacto de Emergencia</div>
@@ -497,6 +511,54 @@
     </section>
 
   </main>
+
+  <!-- ==========================================
+       MODAL: GUÍA DE INSTALACIÓN EN IPHONE / SAFARI
+       ========================================== -->
+  <div class="checkout-modal-backdrop" id="modal-ios-install" style="display: none;" onclick="if(event.target===this) window.cerrarModalIosInstall()">
+    <div class="checkout-modal-card" style="max-width: 440px; text-align: center;">
+      <button class="btn-modal-close" onclick="window.cerrarModalIosInstall()">✕</button>
+
+      <div style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #6366f1, #10b981); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #fff; margin: 0 auto 1rem auto; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+
+      <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;">
+        Instalar Ruta Segura
+      </h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        Sigue estos 2 sencillos pasos en tu iPhone/iPad para abrirla como una aplicación nativa a pantalla completa:
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem; text-align: left; margin-bottom: 1.5rem;">
+        <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 0.9rem; display: flex; align-items: center; gap: 0.9rem;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(99, 102, 241, 0.2); color: #818cf8; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0;">
+            1
+          </div>
+          <div style="font-size: 0.85rem; color: #e2e8f0;">
+            Toca el botón <strong>Compartir</strong> <i class="fa-solid fa-arrow-up-from-bracket" style="color: #38bdf8; margin: 0 3px;"></i> en la barra inferior de Safari.
+          </div>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 0.9rem; display: flex; align-items: center; gap: 0.9rem;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16, 185, 129, 0.2); color: #34d399; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0;">
+            2
+          </div>
+          <div style="font-size: 0.85rem; color: #e2e8f0;">
+            Desliza hacia abajo y pulsa <strong>"Agregar a pantalla de inicio"</strong> <i class="fa-regular fa-square-plus" style="color: #34d399; margin: 0 3px;"></i>.
+          </div>
+        </div>
+      </div>
+
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 0.8rem; font-size: 0.78rem; color: #a7f3d0; margin-bottom: 1.2rem;">
+        ✨ ¡Listo! Se creará el ícono en tu celular y se abrirá en pantalla completa sin barra de navegador.
+      </div>
+
+      <button type="button" class="btn-action-primary" onclick="window.cerrarModalIosInstall()" style="width: 100%; justify-content: center; padding: 0.8rem; font-weight: 700;">
+        ¡Entendido!
+      </button>
+    </div>
+  </div>
 
   <!-- ==========================================
        MODAL: CONFIGURAR MIS DATOS Y CONTACTO DE EMERGENCIA

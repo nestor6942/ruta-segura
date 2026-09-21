@@ -1833,3 +1833,193 @@ table.data-table tr:hover td {
 }
 
 
+
+
+/* ===================================================
+   PWA & NATIVE MOBILE APP EXPERIENCE (< 850px & STANDALONE)
+   =================================================== */
+@media (max-width: 850px), all and (display-mode: standalone) {
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+    background: #090e17;
+  }
+
+  .navbar {
+    padding: 0.5rem 0.8rem !important;
+    background: rgba(11, 15, 25, 0.98) !important;
+  }
+
+  .navbar .brand {
+    gap: 0.5rem !important;
+  }
+
+  .navbar .brand-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .navbar .brand-info h1 {
+    font-size: 1.05rem !important;
+  }
+
+  .navbar .brand-info p {
+    display: none !important;
+  }
+
+  .navbar .nav-links {
+    display: none !important;
+  }
+
+  #system-status-badge {
+    display: none !important;
+  }
+
+  .btn-sound-toggle {
+    display: none !important;
+  }
+
+  .btn-checkout-cta {
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .app-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  #tab-simulator {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .simulator-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .phone-mockup-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .phone-mockup {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: calc(100dvh - 56px) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #090e17 !important;
+    padding: 0 !important;
+  }
+
+  .phone-notch {
+    display: none !important;
+  }
+
+  .phone-status-bar {
+    display: none !important;
+  }
+
+  .phone-screen-viewport {
+    padding: 0.8rem 0.9rem 90px 0.9rem !important;
+    min-height: calc(100dvh - 120px) !important;
+    background: #090e17 !important;
+  }
+
+  .phone-bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 9999 !important;
+    background: rgba(11, 15, 25, 0.97) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    padding: 0.5rem 0.5rem max(0.5rem, env(safe-area-inset-bottom, 12px)) !important;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.7) !important;
+    display: flex !important;
+    justify-content: space-around !important;
+  }
+
+  .phone-nav-item {
+    font-size: 0.72rem !important;
+    padding: 0.2rem 0.6rem !important;
+  }
+
+  .phone-nav-item i {
+    font-size: 1.15rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .map-container-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+  }
+
+  #leaflet-map {
+    height: 380px !important;
+    border-radius: 12px !important;
+  }
+
+  .telemetry-column {
+    padding: 1rem !important;
+  }
+}
+
+/* Install Banner Card */
+.mobile-install-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.18), rgba(16, 185, 129, 0.18));
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.9rem;
+  cursor: pointer;
+  animation: pulseGlow 3s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.2); }
+  100% { box-shadow: 0 0 22px rgba(16, 185, 129, 0.35); }
+}
+
+.btn-install-app {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  transition: var(--transition-fast);
+}
+
+.btn-install-app:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.6);
+}

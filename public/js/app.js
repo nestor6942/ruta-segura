@@ -124,16 +124,23 @@ const PRESET_ROUTES = {
 // ==========================================
 // 3. GLOBAL APP STATE
 // ==========================================
+// 3. GLOBAL APP STATE CON PERSISTENCIA LOCAL EN DISPOSITIVO (LOCALSTORAGE)
+let preloadedUser = null;
+try {
+  const raw = localStorage.getItem('ruta_segura_user_profile');
+  if (raw) preloadedUser = JSON.parse(raw);
+} catch(e) {}
+
 const AppState = {
   user: {
-    nombre: 'Sofía Martínez',
-    telefono: '+525512345678',
+    nombre: preloadedUser?.nombre || 'Néstor',
+    telefono: preloadedUser?.telefono || '+523335952229',
     contacto: {
-      nombre: 'Bertha (Mamá)',
-      telefono: '+525598765432'
+      nombre: preloadedUser?.contacto?.nombre || 'Mi Pareja',
+      telefono: preloadedUser?.contacto?.telefono || '+523335952229'
     },
-    suscripcionActiva: true,
-    plan: 'Bimestral ($120 MXN)'
+    suscripcionActiva: typeof preloadedUser?.suscripcionActiva !== 'undefined' ? preloadedUser.suscripcionActiva : true,
+    plan: preloadedUser?.plan || 'Bimestral Premium ($120 MXN)'
   },
   trip: {
     activo: false,
@@ -231,6 +238,9 @@ function seleccionarChipDestino(dest, btn) {
   const input = document.getElementById('input-trip-destination');
   if (input) input.value = dest;
   AppState.trip.destino = dest;
+  try { localStorage.setItem('ruta_segura_destino', dest); } catch(e) {}
+  const activeDest = document.getElementById('active-trip-dest-text');
+  if (activeDest) activeDest.textContent = dest;
 
   document.querySelectorAll('.dest-chip').forEach(c => c.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -705,6 +715,7 @@ function showToast(msg, type = 'info') {
 // 11. INITIALIZATION & EVENT LISTENERS
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
+  cargarPerfilGuardado(); // Recupera inmediatamente datos de usuario y destino
   initLeafletMap();
   calcularModeloFinanciero();
   actualizarEstadoSuscripcionUI();
@@ -724,6 +735,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (screenId) switchMobileScreen(screenId);
     });
   });
+
+  // Destination input persistence
+  const tripDestInput = document.getElementById('input-trip-destination');
+  if (tripDestInput) {
+    tripDestInput.addEventListener('input', (e) => {
+      const val = e.target.value.trim() || 'Mi Casa';
+      AppState.trip.destino = val;
+      try { localStorage.setItem('ruta_segura_destino', val); } catch(err) {}
+      const activeDest = document.getElementById('active-trip-dest-text');
+      if (activeDest) activeDest.textContent = val;
+    });
+  }
 
   // Trip Route Selector
   const routeSelect = document.getElementById('select-route-preset');
@@ -823,9 +846,10 @@ document.addEventListener('DOMContentLoaded', () => {
             AppState.user.nombre = nombre;
             AppState.user.telefono = telPropio;
             AppState.user.contacto = { nombre: nombreContacto, telefono: telContacto };
-            document.getElementById('mobile-display-name').textContent = nombre;
-            document.getElementById('whatsapp-target-name').textContent = nombreContacto;
-            document.getElementById('whatsapp-target-phone').textContent = telContacto;
+            try {
+              localStorage.setItem('ruta_segura_user_profile', JSON.stringify(AppState.user));
+            } catch(e) {}
+            actualizarVistasPerfil();
             showToast('👤 Perfil, contacto y consentimiento legal guardados con éxito.', 'safe');
           } else {
             showToast(`❌ Error: ${data.error || 'No se pudo guardar'}`, 'danger');
@@ -1110,6 +1134,8 @@ function activarSuscripcionLocal({ telefono, nombre, correo, metodo, cupon, rfc,
         AppState.user.plan = `Bimestral Premium ($${checkoutState.montoFinal} MXN)`;
         AppState.user.nombre = nombre;
         AppState.user.telefono = telefono;
+        try { localStorage.setItem('ruta_segura_user_profile', JSON.stringify(AppState.user)); } catch(e) {}
+        actualizarVistasPerfil();
 
         sfx.playSafeJingle();
         showToast('💳 ¡Suscripción de $120 MXN (cada 2 meses) activada con éxito!', 'safe');
@@ -1467,11 +1493,55 @@ function cargarPerfilGuardado() {
         if (saved.contacto.nombre) AppState.user.contacto.nombre = saved.contacto.nombre;
         if (saved.contacto.telefono) AppState.user.contacto.telefono = saved.contacto.telefono;
       }
+      if (saved && typeof saved.suscripcionActiva !== 'undefined') {
+        AppState.user.suscripcionActiva = saved.suscripcionActiva;
+      }
+      if (saved && saved.plan) {
+        AppState.user.plan = saved.plan;
+      }
+    }
+    const savedDest = localStorage.getItem('ruta_segura_destino');
+    if (savedDest) {
+      AppState.trip.destino = savedDest;
+      const inputDest = document.getElementById('input-trip-destination');
+      if (inputDest) inputDest.value = savedDest;
+      const activeDestText = document.getElementById('active-trip-dest-text');
+      if (activeDestText) activeDestText.textContent = savedDest;
     }
   } catch (e) {
     console.warn('Error leyendo perfil de localStorage:', e);
   }
   actualizarVistasPerfil();
+  actualizarEstadoSuscripcionUI();
+  sincronizarPerfilConServidor();
+}
+
+async function sincronizarPerfilConServidor() {
+  if (!AppState.user.telefono || !AppState.user.contacto?.telefono) return;
+  try {
+    const res = await fetch('/registro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre: AppState.user.nombre,
+        telefonoPropio: AppState.user.telefono,
+        nombreContacto: AppState.user.contacto.nombre,
+        telefonoContacto: AppState.user.contacto.telefono,
+        suscripcionActiva: AppState.user.suscripcionActiva,
+        consentimientoLegal: true
+      })
+    });
+    const data = await res.json();
+    if (data.ok && data.usuario) {
+      if (typeof data.usuario.suscripcionActiva !== 'undefined' && data.usuario.suscripcionActiva !== AppState.user.suscripcionActiva) {
+        AppState.user.suscripcionActiva = data.usuario.suscripcionActiva;
+        localStorage.setItem('ruta_segura_user_profile', JSON.stringify(AppState.user));
+        actualizarVistasPerfil();
+      }
+    }
+  } catch(e) {
+    // Si el servidor está arrancando o el usuario está sin conexión, no interrumpe nada.
+  }
 }
 
 function actualizarVistasPerfil() {
@@ -1523,6 +1593,18 @@ function actualizarVistasPerfil() {
 
   const ckContTel = document.getElementById('ck-contacto-tel');
   if (ckContTel && (ckContTel.value === '+525598765432' || !ckContTel.value)) ckContTel.value = AppState.user.contacto.telefono;
+
+  // 6. Etiqueta de Suscripción en el Header Móvil
+  const elPlanTag = document.getElementById('mobile-plan-tag');
+  if (elPlanTag) {
+    if (AppState.user.suscripcionActiva) {
+      elPlanTag.textContent = `● Suscripción Activa (${AppState.user.plan || '$120/2 meses'})`;
+      elPlanTag.style.color = '#10b981';
+    } else {
+      elPlanTag.textContent = '● Plan Gratuito (Modo Básico)';
+      elPlanTag.style.color = '#94a3b8';
+    }
+  }
 }
 
 function abrirModalPerfil() {

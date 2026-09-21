@@ -21,6 +21,30 @@
 
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
+  <!-- Zero-latency restore from localStorage on page load -->
+  <script>
+    (function() {
+      try {
+        var raw = localStorage.getItem('ruta_segura_user_profile');
+        if (raw) {
+          var u = JSON.parse(raw);
+          document.addEventListener('DOMContentLoaded', function() {
+            var nameEl = document.getElementById('mobile-display-name');
+            var avatarEl = document.getElementById('mobile-avatar-circle');
+            var contNomEl = document.getElementById('mobile-contact-name');
+            var contTelEl = document.getElementById('mobile-contact-phone');
+            if (nameEl && u.nombre) nameEl.textContent = u.nombre;
+            if (avatarEl && u.nombre) {
+              var p = u.nombre.trim().split(' ');
+              avatarEl.textContent = p.length > 1 ? (p[0][0] + p[1][0]).toUpperCase() : p[0].substring(0, 2).toUpperCase();
+            }
+            if (contNomEl && u.contacto && u.contacto.nombre) contNomEl.textContent = u.contacto.nombre;
+            if (contTelEl && u.contacto && u.contacto.telefono) contTelEl.textContent = u.contacto.telefono;
+          });
+        }
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body>
 
@@ -241,9 +265,9 @@
               <div id="screen-home" class="native-screen active">
                 <div class="mobile-header-bar">
                   <div class="user-profile-badge" onclick="window.abrirModalPerfil()" style="cursor: pointer;" title="Toca para editar tu nombre y teléfonos">
-                    <div class="avatar-circle" id="mobile-avatar-circle">SM</div>
+                    <div class="avatar-circle" id="mobile-avatar-circle">N</div>
                     <div>
-                      <div style="font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;"><span id="mobile-display-name">Sofía Martínez</span> <i class="fa-solid fa-pen" style="font-size: 0.65rem; color: #a5b4fc; opacity: 0.85;"></i></div>
+                      <div style="font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;"><span id="mobile-display-name">Néstor</span> <i class="fa-solid fa-pen" style="font-size: 0.65rem; color: #a5b4fc; opacity: 0.85;"></i></div>
                       <div style="font-size: 0.72rem; color: #10b981;" id="mobile-plan-tag">● Suscripción Activa ($120/2 meses)</div>
                     </div>
                   </div>
@@ -272,8 +296,8 @@
                   </div>
                   <div style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                      <div style="font-weight: 700; font-size: 0.9rem;" id="mobile-contact-name">Bertha (Mamá)</div>
-                      <div style="font-size: 0.75rem; color: var(--text-muted);" id="mobile-contact-phone">+52 55 9876 5432</div>
+                      <div style="font-weight: 700; font-size: 0.9rem;" id="mobile-contact-name">Mi Pareja</div>
+                      <div style="font-size: 0.75rem; color: var(--text-muted);" id="mobile-contact-phone">+52 33 3595 2229</div>
                     </div>
                     <span style="background: rgba(37, 211, 102, 0.15); color: #25d366; padding: 0.25rem 0.55rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700;">
                       <i class="fa-brands fa-whatsapp"></i> Twilio Listo
@@ -375,7 +399,7 @@
                 <div class="mobile-card" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.06);">
                   <div style="font-size: 0.75rem; color: #fca5a5; line-height: 1.4;">
                     <strong>Destinatario Inmediato:</strong><br>
-                    <span id="sos-target-display">Bertha (Mamá) &bull; +52 55 9876 5432</span>
+                    <span id="sos-target-display">Mi Pareja &bull; +52 33 3595 2229</span>
                   </div>
                 </div>
               </div>
@@ -495,7 +519,7 @@
                 <i class="fa-brands fa-whatsapp"></i>
               </div>
               <div class="whatsapp-contact-info">
-                <h4 id="whatsapp-target-name">Bertha (Mamá)</h4>
+                <h4 id="whatsapp-target-name">Mi Pareja</h4>
                 <span id="whatsapp-target-phone">+52 55 9876 5432 &bull; En línea</span>
               </div>
             </div>
@@ -505,7 +529,7 @@
                 <div style="font-weight: 800; font-size: 0.82rem; margin-bottom: 0.2rem; color: #34d399;">
                   🛡️ RUTA SEGURA BOT
                 </div>
-                <div id="wa-mock-bubble-text">Hola <span id="wa-mock-contact">Bertha</span>, el sistema de protección de <strong id="wa-mock-user">Sofía</strong> está activo para este viaje. Recibirás alertas inmediatas si se detecta cualquier anomalía.</div>
+                <div id="wa-mock-bubble-text">Hola <span id="wa-mock-contact">Mi Pareja</span>, el sistema de protección de <strong id="wa-mock-user">Néstor</strong> está activo para este viaje. Recibirás alertas inmediatas si se detecta cualquier anomalía.</div>
                 <div class="bubble-time">10:30 PM • Conectado vía Twilio</div>
               </div>
             </div>
@@ -704,7 +728,7 @@
         <div class="form-row-2">
           <div class="form-group">
             <label class="form-label" for="ck-nombre">Nombre Completo:</label>
-            <input type="text" id="ck-nombre" class="form-input" placeholder="ej. Sofía Martínez" value="Sofía Martínez" required>
+            <input type="text" id="ck-nombre" class="form-input" placeholder="ej. Néstor" value="Néstor" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="ck-telefono">Teléfono Propio (WhatsApp):</label>
@@ -715,7 +739,7 @@
         <div class="form-row-2" style="background: rgba(37, 211, 102, 0.05); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(37, 211, 102, 0.25); margin-bottom: 0.8rem;">
           <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label" for="ck-contacto-nombre" style="color: #34d399;"><i class="fa-solid fa-heart"></i> Nombre Contacto de Auxilio:</label>
-            <input type="text" id="ck-contacto-nombre" class="form-input" placeholder="ej. Mi Pareja / Mamá" value="Bertha (Mamá)" required>
+            <input type="text" id="ck-contacto-nombre" class="form-input" placeholder="ej. Mi Pareja" value="Mi Pareja" required>
           </div>
           <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label" for="ck-contacto-tel" style="color: #34d399;"><i class="fa-brands fa-whatsapp"></i> WhatsApp del Contacto:</label>

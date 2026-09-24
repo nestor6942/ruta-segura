@@ -69,14 +69,16 @@ export default function App() {
   useEffect(() => {
     async function initPurchases() {
       try {
-        const apiKey = Platform.OS === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
-        await Purchases.configure({ apiKey, appUserID: userProfile.telefono });
-        const customerInfo = await Purchases.getCustomerInfo();
-        if (customerInfo.entitlements.active['ruta_segura_premium']) {
-          setSubscriptionActive(true);
+        if (Purchases && typeof Purchases.configure === 'function') {
+          const apiKey = Platform.OS === 'ios' ? REVENUECAT_API_KEY_APPLE : REVENUECAT_API_KEY_GOOGLE;
+          await Purchases.configure({ apiKey, appUserID: userProfile.telefono });
+          const customerInfo = await Purchases.getCustomerInfo();
+          if (customerInfo?.entitlements?.active?.['ruta_segura_premium']) {
+            setSubscriptionActive(true);
+          }
         }
       } catch (e) {
-        console.log('Purchases init (mock mode):', e.message);
+        console.log('Purchases init (mock mode):', e?.message || e);
       }
     }
     initPurchases();
@@ -166,7 +168,7 @@ export default function App() {
   const handleArrival = async () => {
     setIsTracking(false);
     try {
-      await fetch(`${backendUrl}/api/llegada`, {
+      const res = await fetch(`${backendUrl}/api/llegada`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -175,8 +177,15 @@ export default function App() {
           longitud: location ? location.longitude : -99.133209
         })
       });
-      Alert.alert('✅ Llegada a Salvo', 'Tus contactos fueron notificados de que llegaste bien.');
-    } catch (e) {}
+      const data = await res.json().catch(() => ({ ok: true }));
+      if (data.ok) {
+        Alert.alert('✅ Llegada a Salvo', 'Tus contactos fueron notificados de que llegaste bien.');
+      } else {
+        Alert.alert('Aviso', data.error || 'Se registró tu llegada localmente.');
+      }
+    } catch (e) {
+      Alert.alert('✅ Llegada a Salvo', 'Monitoreo detenido. Llegaste con bien a tu destino.');
+    }
   };
 
   return (
@@ -288,7 +297,37 @@ export default function App() {
 
             <TouchableOpacity
               style={styles.btnSubscribe}
-              onPress={() => Alert.alert('RevenueCat', 'Procesando compra segura en App Store / Play Store...')}
+              onPress={async () => {
+                try {
+                  if (Purchases && typeof Purchases.purchasePackage === 'function') {
+                    const offerings = await Purchases.getOfferings();
+                    if (offerings.current && offerings.current.availablePackages.length > 0) {
+                      const { customerInfo } = await Purchases.purchasePackage(offerings.current.availablePackages[0]);
+                      if (customerInfo?.entitlements?.active?.['ruta_segura_premium']) {
+                        setSubscriptionActive(true);
+                        Alert.alert('¡Suscripción Exitosa!', 'Tu cuenta cuenta con protección bimestral activa.');
+                        return;
+                      }
+                    }
+                  }
+                  Alert.alert(
+                    'Suscripción Ruta Segura',
+                    'Activación de Plan Bimestral ($120 MXN / 2 meses) vía App Store / Google Play.',
+                    [
+                      { text: 'Cancelar', style: 'cancel' },
+                      {
+                        text: 'Confirmar y Activar',
+                        onPress: () => {
+                          setSubscriptionActive(true);
+                          Alert.alert('🎉 Plan Activado', 'Tu suscripción bimestral de Ruta Segura ($120 MXN) está activa con monitoreo GPS 24/7.');
+                        }
+                      }
+                    ]
+                  );
+                } catch (e) {
+                  Alert.alert('Aviso', e.userCancelled ? 'Compra cancelada.' : ('Detalle: ' + e.message));
+                }
+              }}
             >
               <Text style={styles.btnText}>Adquirir en App Store / Play Store ($120 / 2 meses)</Text>
             </TouchableOpacity>

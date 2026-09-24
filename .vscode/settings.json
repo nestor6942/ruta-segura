@@ -1,0 +1,10 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "**/app.json"
+      ],
+      "url": "https://json.schemastore.org/expo-50.0.0.json"
+    }
+  ]
+}

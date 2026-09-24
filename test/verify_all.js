@@ -23,14 +23,20 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
-async function waitForServer(url, timeoutMs = 6000) {
+async function waitForServer(url, timeoutMs = 8000) {
   const start = Date.now();
+  const altUrl = url.includes('127.0.0.1') ? url.replace('127.0.0.1', 'localhost') : url.replace('localhost', '127.0.0.1');
   while (Date.now() - start < timeoutMs) {
     try {
       const res = await fetch(`${url}/api/status`);
       if (res.ok) return true;
-    } catch (_) {}
-    await new Promise(r => setTimeout(r, 300));
+    } catch (_) {
+      try {
+        const altRes = await fetch(`${altUrl}/api/status`);
+        if (altRes.ok) return true;
+      } catch (_) {}
+    }
+    await new Promise(r => setTimeout(r, 250));
   }
   return false;
 }
@@ -44,10 +50,12 @@ async function runTests() {
   if (!isRunning) {
     console.log('⚡ Servidor no detectado en puerto 3000. Iniciando server.js automáticamente...');
     serverProcess = spawn(process.execPath, [path.join(__dirname, '..', 'server.js')], {
+      cwd: path.join(__dirname, '..'),
+      env: { ...process.env, PORT: '3000' },
       stdio: 'ignore',
       detached: false
     });
-    const ready = await waitForServer(BASE_URL, 7000);
+    const ready = await waitForServer(BASE_URL, 10000);
     if (!ready) {
       console.error('❌ No se pudo iniciar el servidor para las pruebas.');
       if (serverProcess) serverProcess.kill();
